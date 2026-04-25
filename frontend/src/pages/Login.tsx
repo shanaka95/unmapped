@@ -23,7 +23,7 @@ export default function Login() {
 
     if (result.data) {
       login(result.data.user, result.data.access_token)
-      navigate('/dashboard')
+      navigate(result.data.user.role === 'admin' ? '/admin' : '/dashboard')
     } else {
       setError(result.error || 'Login failed')
     }

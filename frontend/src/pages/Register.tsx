@@ -35,7 +35,7 @@ export default function Register() {
 
     if (result.data) {
       login(result.data.user, result.data.access_token)
-      navigate('/dashboard')
+      navigate(result.data.user.role === 'admin' ? '/admin' : '/dashboard')
     } else {
       setFormError(result.error || 'Registration failed')
     }
