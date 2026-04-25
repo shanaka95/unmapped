@@ -36,3 +36,12 @@ export async function deleteSector(id: number) {
 export async function listIloSectors() {
   return apiClient.get<IloSector[]>('/ilo-sectors/')
 }
+
+export interface ClassifyResponse {
+  ilo_sector_id: number
+  ilo_sector_name: string
+}
+
+export async function classifySector(title: string, description?: string | null) {
+  return apiClient.post<ClassifyResponse>('/sectors/classify', { title, description })
+}

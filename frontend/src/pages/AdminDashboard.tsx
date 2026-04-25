@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { getAdminStats, getAdminUsers, type AdminStats, type User } from '../api/auth'
 import {
-  listSectors, createSector, deleteSector, listIloSectors,
+  listSectors, createSector, deleteSector, listIloSectors, classifySector,
   type Sector, type IloSector,
 } from '../api/sectors'
 import InputField from '../components/InputField'
@@ -208,6 +208,7 @@ function SectorsSection() {
   const [showForm, setShowForm] = useState(false)
   const [formError, setFormError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isClassifying, setIsClassifying] = useState(false)
 
   // Form state
   const [title, setTitle] = useState('')
@@ -263,6 +264,20 @@ function SectorsSection() {
   }
 
   const iloOptions = iloSectors.map(s => ({ value: String(s.id), label: s.name }))
+  const canClassify = title.trim().length > 0
+
+  async function handleAiClassify() {
+    if (!canClassify) return
+    setIsClassifying(true)
+    setFormError('')
+    const result = await classifySector(title.trim(), description.trim() || null)
+    if (result.data) {
+      setIloSectorId(String(result.data.ilo_sector_id))
+    } else {
+      setFormError(result.error || 'AI classification failed. Please select manually.')
+    }
+    setIsClassifying(false)
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -310,15 +325,43 @@ function SectorsSection() {
               className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
             />
           </div>
-          <SelectField
-            label="ILO Sector"
-            id="ilo-sector"
-            options={iloOptions}
-            placeholder="Select an ILO sector"
-            value={iloSectorId}
-            onChange={setIloSectorId}
-            required
-          />
+          <div className="flex flex-col gap-unit">
+            <div className="flex items-center justify-between">
+              <label
+                className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+                htmlFor="ilo-sector"
+              >
+                ILO Sector
+              </label>
+              <button
+                type="button"
+                onClick={handleAiClassify}
+                disabled={!canClassify || isClassifying}
+                className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"
+                title={!canClassify ? 'Enter a title first' : 'Let AI suggest the best ILO sector'}
+              >
+                <span className={`material-symbols-outlined text-[16px] ${isClassifying ? 'animate-spin' : ''}`}>
+                  {isClassifying ? 'progress_activity' : 'auto_awesome'}
+                </span>
+                {isClassifying ? 'Classifying...' : 'AI Suggest'}
+              </button>
+            </div>
+            <SelectField
+              id="ilo-sector"
+              options={iloOptions}
+              placeholder="Select or use AI to auto-fill"
+              value={iloSectorId}
+              onChange={setIloSectorId}
+            />
+            {iloSectorId && (
+              <div className="flex items-center gap-unit">
+                <span className="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+                <span className="font-poppins text-label-sm text-primary">
+                  {iloSectors.find(s => String(s.id) === iloSectorId)?.name}
+                </span>
+              </div>
+            )}
+          </div>
           <button
             type="submit"
             disabled={isSubmitting}

@@ -1,17 +1,16 @@
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
 
 interface SelectFieldProps {
-  label: string
+  label?: string
   id: string
   options: { value: string; label: string }[]
   placeholder?: string
   error?: string
   value: string
   onChange: (value: string) => void
-  required?: boolean
 }
 
-export default function SelectField({ label, id, options, placeholder, error, value, onChange, required }: SelectFieldProps) {
+export default function SelectField({ label, id, options, placeholder, error, value, onChange }: SelectFieldProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const ref = useRef<HTMLDivElement>(null)
@@ -47,12 +46,14 @@ export default function SelectField({ label, id, options, placeholder, error, va
 
   return (
     <div className="flex flex-col gap-unit" ref={ref}>
-      <label
-        className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
-        htmlFor={id}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+          htmlFor={id}
+        >
+          {label}
+        </label>
+      )}
       <div className="relative">
         <button
           type="button"

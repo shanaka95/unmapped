@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -6,6 +7,7 @@ from app.dependencies import get_current_user, get_db
 from app.models import IloSector, Sector
 from app.models.user import User
 from app.schemas.sector import SectorCreate, SectorResponse, SectorUpdate
+from app.services.ai import classify_ilo_sector
 
 router = APIRouter(prefix="/api/sectors", tags=["Sectors"])
 
@@ -80,3 +82,35 @@ def delete_sector(
         raise HTTPException(status_code=404, detail="Sector not found")
     db.delete(sector)
     db.commit()
+
+
+class ClassifyRequest(BaseModel):
+    title: str
+    description: str | None = None
+
+
+class ClassifyResponse(BaseModel):
+    ilo_sector_id: int
+    ilo_sector_name: str
+
+
+@router.post("/classify", response_model=ClassifyResponse)
+def classify_sector(
+    body: ClassifyRequest,
+    db: Session = Depends(get_db),
+    _user: User = Depends(get_current_user),
+):
+    ilo_sectors = [
+        {"id": s.id, "name": s.name}
+        for s in db.scalars(select(IloSector).order_by(IloSector.id)).all()
+    ]
+
+    result = classify_ilo_sector(body.title, body.description, ilo_sectors)
+    if result is None:
+        raise HTTPException(
+            status_code=422,
+            detail="Could not classify the sector. Please select manually.",
+        )
+
+    matched = next(s for s in ilo_sectors if s["id"] == result)
+    return ClassifyResponse(ilo_sector_id=result, ilo_sector_name=matched["name"])
