@@ -18,6 +18,9 @@ class Settings(BaseSettings):
 
     frontend_url: str = "http://localhost:5173"
 
+    cloudflare_account_id: str
+    cloudflare_auth_token: str
+
     model_config = {"env_prefix": "UNMAPPED_", "env_file": ".env"}
 
 
