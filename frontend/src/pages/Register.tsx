@@ -5,25 +5,29 @@ import InputField from '../components/InputField'
 import Button from '../components/Button'
 import { register as apiRegister } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
+import { validateRegistration, type FieldErrors } from '../utils/validation'
 
 export default function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
+  const [formError, setFormError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    setError('')
+    setFormError('')
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
+    const errors = validateRegistration({ name, email, password, confirmPassword })
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
+    setFieldErrors({})
 
     setIsSubmitting(true)
 
@@ -33,7 +37,7 @@ export default function Register() {
       login(result.data.user, result.data.access_token)
       navigate('/dashboard')
     } else {
-      setError(result.error || 'Registration failed')
+      setFormError(result.error || 'Registration failed')
     }
 
     setIsSubmitting(false)
@@ -42,8 +46,8 @@ export default function Register() {
   return (
     <AuthLayout title="Create account">
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-        {error && (
-          <p className="font-poppins text-label-sm text-error">{error}</p>
+        {formError && (
+          <p className="font-poppins text-label-sm text-error">{formError}</p>
         )}
         <InputField
           label="Full Name"
@@ -51,7 +55,8 @@ export default function Register() {
           type="text"
           placeholder="John Doe"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={e => { setName(e.target.value); setFieldErrors(prev => ({ ...prev, name: '' })) }}
+          error={fieldErrors.name}
           required
         />
         <InputField
@@ -60,7 +65,8 @@ export default function Register() {
           type="email"
           placeholder="name@example.com"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={e => { setEmail(e.target.value); setFieldErrors(prev => ({ ...prev, email: '' })) }}
+          error={fieldErrors.email}
           required
         />
         <InputField
@@ -69,7 +75,8 @@ export default function Register() {
           type="password"
           placeholder="••••••••"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={e => { setPassword(e.target.value); setFieldErrors(prev => ({ ...prev, password: '' })) }}
+          error={fieldErrors.password}
           required
         />
         <InputField
@@ -78,7 +85,8 @@ export default function Register() {
           type="password"
           placeholder="••••••••"
           value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
+          onChange={e => { setConfirmPassword(e.target.value); setFieldErrors(prev => ({ ...prev, confirmPassword: '' })) }}
+          error={fieldErrors.confirmPassword}
           required
         />
         <div className="flex flex-col gap-4 mt-4">

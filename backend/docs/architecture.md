@@ -89,6 +89,28 @@ Request → Router → Service → Model
 | POST | `/api/auth/logout` | Cookie | Revoke refresh token + clear cookie |
 | GET | `/api/auth/me` | Bearer | Get current user profile |
 
+### Admin Endpoints
+
+Admin-only endpoints are protected by the `get_admin_user` dependency. Regular users get 403 Forbidden.
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/admin/stats` | Admin Bearer | User statistics (total, verified) |
+| GET | `/api/admin/users` | Admin Bearer | List all users |
+
+### Roles
+
+Users have a `role` field (default: `"user"`). The `"admin"` role grants access to `/api/admin/*` endpoints. The admin user is seeded via `python seed_admin.py`.
+
+### Seeding
+
+```bash
+source .venv/bin/activate
+python seed_admin.py
+```
+
+Creates admin user: `admin@unmapped.dev` / `Admin123`.
+
 ## Database
 
 SQLAlchemy ORM with SQLite as the default database. The connection is configured via `app/config.py` and read from the `UNMAPPED_DATABASE_URL` env var. SQLite-specific options (like `check_same_thread`) are applied conditionally in `database.py`, so switching to PostgreSQL or MySQL only requires changing the connection string — no code changes.

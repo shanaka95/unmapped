@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import './index.css'
 
 const Login = lazy(() => import('./pages/Login'))
@@ -11,6 +12,7 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 
 function LoadingFallback() {
   return (
@@ -39,6 +41,14 @@ createRoot(document.getElementById('root')!).render(
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
               }
             />
           </Routes>

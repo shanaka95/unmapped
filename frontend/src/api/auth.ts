@@ -5,6 +5,7 @@ export interface User {
   name: string
   email: string
   is_verified: boolean
+  role: string
 }
 
 export interface AuthResponse {
@@ -49,4 +50,18 @@ export async function resetPassword(token: string, new_password: string, confirm
 
 export async function getMe() {
   return apiClient.get<User>('/auth/me')
+}
+
+export interface AdminStats {
+  total_users: number
+  verified_users: number
+  admin: User
+}
+
+export async function getAdminStats() {
+  return apiClient.get<AdminStats>('/admin/stats')
+}
+
+export async function getAdminUsers() {
+  return apiClient.get<User[]>('/admin/users')
 }

@@ -94,6 +94,7 @@ class UserResponse(BaseModel):
     name: str
     email: str
     is_verified: bool
+    role: str
 
     model_config = {"from_attributes": True}
 

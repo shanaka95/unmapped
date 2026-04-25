@@ -4,6 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.routers import health
 from app.routers.auth import router as auth_router
+from app.routers.admin import router as admin_router
+from app.routers.ilo_sector import router as ilo_sector_router
+from app.routers.sector import router as sector_router
 
 
 def create_app() -> FastAPI:
@@ -23,6 +26,9 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(auth_router)
+    app.include_router(admin_router)
+    app.include_router(ilo_sector_router)
+    app.include_router(sector_router)
 
     return app
 

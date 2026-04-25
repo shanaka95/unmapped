@@ -4,6 +4,7 @@ import AuthLayout from '../components/AuthLayout'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
 import { resetPassword } from '../api/auth'
+import { validatePasswordReset, type FieldErrors } from '../utils/validation'
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams()
@@ -11,21 +12,24 @@ export default function ResetPassword() {
 
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
+  const [formError, setFormError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [success, setSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    setError('')
+    setFormError('')
 
-    if (newPassword !== confirmPassword) {
-      setError('Passwords do not match')
+    const errors = validatePasswordReset({ password: newPassword, confirmPassword })
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
+    setFieldErrors({})
 
     if (!token) {
-      setError('Invalid or missing reset token')
+      setFormError('Invalid or missing reset token')
       return
     }
 
@@ -36,7 +40,7 @@ export default function ResetPassword() {
     if (result.data) {
       setSuccess(true)
     } else {
-      setError(result.error || 'Reset failed')
+      setFormError(result.error || 'Reset failed')
     }
 
     setIsSubmitting(false)
@@ -76,8 +80,8 @@ export default function ResetPassword() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          {error && (
-            <p className="font-poppins text-label-sm text-error">{error}</p>
+          {formError && (
+            <p className="font-poppins text-label-sm text-error">{formError}</p>
           )}
           <InputField
             label="New Password"
@@ -85,7 +89,8 @@ export default function ResetPassword() {
             type="password"
             placeholder="••••••••"
             value={newPassword}
-            onChange={e => setNewPassword(e.target.value)}
+            onChange={e => { setNewPassword(e.target.value); setFieldErrors(prev => ({ ...prev, password: '' })) }}
+            error={fieldErrors.password}
             required
           />
           <InputField
@@ -94,7 +99,8 @@ export default function ResetPassword() {
             type="password"
             placeholder="••••••••"
             value={confirmPassword}
-            onChange={e => setConfirmPassword(e.target.value)}
+            onChange={e => { setConfirmPassword(e.target.value); setFieldErrors(prev => ({ ...prev, confirmPassword: '' })) }}
+            error={fieldErrors.confirmPassword}
             required
           />
           <div className="flex flex-col gap-4 mt-4">
