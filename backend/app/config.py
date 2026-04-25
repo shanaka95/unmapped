@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic_settings import BaseSettings
 
 
@@ -6,7 +8,19 @@ class Settings(BaseSettings):
     debug: bool = False
     database_url: str = "sqlite:///./unmapped.db"
 
-    model_config = {"env_prefix": "UNMAPPED_"}
+    secret_key: str
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
+
+    resend_api_key: str
+    mail_from: str = "noreply@unmapped.vitaz.dev"
+    mail_from_name: str = "Unmapped"
+
+    frontend_url: str = "http://localhost:5173"
+
+    model_config = {"env_prefix": "UNMAPPED_", "env_file": ".env"}
 
 
-settings = Settings()
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
