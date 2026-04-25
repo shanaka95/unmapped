@@ -7,7 +7,7 @@ from app.models import IloSector, Sector
 from app.models.user import User
 from app.schemas.sector import SectorCreate, SectorResponse, SectorUpdate
 
-router = APIRouter(prefix="/sectors", tags=["Sectors"])
+router = APIRouter(prefix="/api/sectors", tags=["Sectors"])
 
 
 @router.get("/", response_model=list[SectorResponse])

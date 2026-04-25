@@ -6,7 +6,7 @@ from app.dependencies import get_db
 from app.models import IloSector
 from app.schemas.sector import IloSectorResponse
 
-router = APIRouter(prefix="/ilo-sectors", tags=["ILO Sectors"])
+router = APIRouter(prefix="/api/ilo-sectors", tags=["ILO Sectors"])
 
 
 @router.get("/", response_model=list[IloSectorResponse])

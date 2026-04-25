@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 import { getAdminStats, getAdminUsers, type AdminStats, type User } from '../api/auth'
 import {
@@ -26,12 +25,6 @@ export default function AdminDashboard() {
           </span>
         </div>
         <div className="flex items-center gap-6">
-          <Link
-            to="/dashboard"
-            className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 uppercase tracking-wider"
-          >
-            Dashboard
-          </Link>
           <button
             onClick={logout}
             className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 uppercase tracking-wider cursor-pointer"
@@ -323,7 +316,7 @@ function SectorsSection() {
             options={iloOptions}
             placeholder="Select an ILO sector"
             value={iloSectorId}
-            onChange={e => setIloSectorId(e.target.value)}
+            onChange={setIloSectorId}
             required
           />
           <button
