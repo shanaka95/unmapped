@@ -11,6 +11,8 @@ from app.routers.occupation import router as occupation_router
 from app.routers.occupation_group import router as occupation_group_router
 from app.routers.isced_level import router as isced_level_router
 from app.routers.education_level import router as education_level_router
+from app.routers.settlement import router as settlement_router
+from app.routers.profile import router as profile_router
 
 
 def create_app() -> FastAPI:
@@ -37,6 +39,8 @@ def create_app() -> FastAPI:
     app.include_router(occupation_group_router)
     app.include_router(isced_level_router)
     app.include_router(education_level_router)
+    app.include_router(settlement_router)
+    app.include_router(profile_router)
 
     return app
 

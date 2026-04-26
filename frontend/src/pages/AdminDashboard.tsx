@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 import { getAdminStats, getAdminUsers, type AdminStats, type User } from '../api/auth'
 import {
@@ -71,6 +72,13 @@ export default function AdminDashboard() {
               {t(SECTION_KEYS[s])}
             </button>
           ))}
+          <Link
+            to="/admin/settlements"
+            className="text-left px-4 py-3 rounded-xl font-poppins text-label-sm uppercase tracking-wider transition-colors duration-300 text-on-surface-variant hover:bg-surface-container flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-[18px]">map</span>
+            {t('admin.settlements')}
+          </Link>
         </nav>
 
         {/* Mobile nav */}
@@ -88,6 +96,13 @@ export default function AdminDashboard() {
               {t(SECTION_KEYS[s])}
             </button>
           ))}
+          <Link
+            to="/admin/settlements"
+            className="flex-1 py-3 font-poppins text-label-sm uppercase tracking-wider text-center text-on-surface-variant hover:text-primary transition-colors duration-300 flex items-center justify-center gap-1"
+          >
+            <span className="material-symbols-outlined text-[16px]">map</span>
+            {t('admin.settlements')}
+          </Link>
         </div>
 
         {/* Main content */}
