@@ -1241,7 +1241,7 @@ function EducationSection() {
       setShowForm(false)
       await loadData()
     } else {
-      setFormError(result.error || 'Failed to create education level')
+      setFormError(result.error || t('api.failedToCreateEducationLevel'))
     }
     setIsSubmitting(false)
   }
@@ -1281,7 +1281,7 @@ function EducationSection() {
           className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">{showForm ? 'close' : 'add'}</span>
-          {showForm ? 'Cancel' : 'Add Level'}
+          {showForm ? t('common.cancel') : t('admin.education.addLevel')}
         </button>
       </div>
 
@@ -1297,7 +1297,7 @@ function EducationSection() {
           <InputField
             label="Name"
             id="edu-name"
-            placeholder="e.g. Bachelor of Science"
+            placeholder={t('admin.education.namePlaceholder')}
             value={name}
             onChange={e => setName(e.target.value)}
             required
@@ -1311,7 +1311,7 @@ function EducationSection() {
             </label>
             <textarea
               id="edu-description"
-              placeholder={'A human-friendly description, e.g. "I have completed my bachelor\'s degree at a university"...'}
+              placeholder={t('admin.education.descriptionPlaceholder')}
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={3}
@@ -1322,7 +1322,7 @@ function EducationSection() {
             label="ISCED Level"
             id="edu-isced"
             options={iscedOptions}
-            placeholder="Select ISCED level"
+            placeholder={t('admin.education.selectIscedLevel')}
             value={iscedLevelId}
             onChange={setIscedLevelId}
           />
@@ -1339,7 +1339,7 @@ function EducationSection() {
             disabled={isSubmitting}
             className="self-start font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
           >
-            {isSubmitting ? 'Creating...' : 'Create Level'}
+            {isSubmitting ? t('common.creating') : t('admin.education.createLevel')}
           </button>
         </form>
       )}
@@ -1350,7 +1350,7 @@ function EducationSection() {
           id="edu-search"
           value={search}
           onChange={v => { setSearch(v); setPage(1) }}
-          placeholder="Search education levels..."
+          placeholder={t('admin.education.searchLevels')}
         />
       )}
 
@@ -1363,7 +1363,7 @@ function EducationSection() {
         <div className="border border-outline-variant rounded-xl p-12 text-center">
           <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">school</span>
           <p className="font-poppins text-body-md text-on-surface-variant">
-            {levels.length === 0 ? 'No education levels yet. Add one above.' : 'No education levels match your search.'}
+            {levels.length === 0 ? t('admin.education.noLevels') : t('admin.education.noSearchResults')}
           </p>
         </div>
       ) : (

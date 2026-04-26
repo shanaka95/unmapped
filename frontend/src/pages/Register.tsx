@@ -39,7 +39,7 @@ export default function Register() {
       login(result.data.user, result.data.access_token)
       navigate(result.data.user.role === 'admin' ? '/admin' : '/dashboard')
     } else {
-      setFormError(result.error || 'Registration failed')
+      setFormError(result.error || t('api.registrationFailed'))
     }
 
     setIsSubmitting(false)

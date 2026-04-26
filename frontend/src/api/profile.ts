@@ -15,6 +15,8 @@ export interface Profile {
   language_ids: number[]
   informal_work: string | null
   self_taught_skills: string | null
+  monthly_gross_income: number | null
+  gender: string | null
   current_step: number
   is_complete: boolean
   completion_pct: number
@@ -48,6 +50,8 @@ export function updateProfile(data: Partial<{
   language_ids: number[]
   informal_work: string | null
   self_taught_skills: string | null
+  monthly_gross_income: number | null
+  gender: string | null
   current_step: number
   is_complete: boolean
 }>) {

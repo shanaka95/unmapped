@@ -203,6 +203,7 @@
     "continue": "Continue",
     "back": "Back",
     "complete": "Get Started",
+    "gender": "Gender",
     "dateOfBirth": "Date of Birth",
     "location": "Where are you?",
     "locationSubtitle": "Help us understand your local context",
@@ -244,7 +245,11 @@
     "languages": "Languages",
     "languagesSubtitle": "Select all languages you speak",
     "popular": "Popular",
-    "searchLanguage": "Search languages..."
+    "searchLanguage": "Search languages...",
+    "monthlyIncome": "Monthly Income",
+    "monthlyIncomeSubtitle": "This helps us understand your current economic context",
+    "monthlyGrossIncome": "Monthly Gross Income",
+    "incomePlaceholder": "e.g. 2500"
   },
   "careerAssistant": {
     "greeting": "Hi, I'm Orin",
@@ -277,6 +282,10 @@
     "aboutThisRole": "About this role",
     "highMatch": "high match",
     "mediumMatch": "medium match",
-    "lowMatch": "low match"
+    "lowMatch": "low match",
+    "fullAIAnalysis": "Full AI Analysis",
+    "chooseThisPath": "Choose This Path",
+    "seeFullAnalysis": "See Full Analysis",
+    "hideAnalysis": "Hide Analysis"
   }
 }

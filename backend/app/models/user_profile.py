@@ -21,6 +21,8 @@ class UserProfile(Base):
     education_level_id: Mapped[int | None] = mapped_column(ForeignKey("education_levels.id"), nullable=True)
     informal_work: Mapped[str | None] = mapped_column(Text, nullable=True)
     self_taught_skills: Mapped[str | None] = mapped_column(Text, nullable=True)
+    monthly_gross_income: Mapped[float | None] = mapped_column(Float, nullable=True)
+    gender: Mapped[str | None] = mapped_column(String(20), nullable=True)
     current_step: Mapped[int] = mapped_column(Integer, default=1)
     is_complete: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime.datetime] = mapped_column(

@@ -37,6 +37,8 @@ def _profile_to_response(p: UserProfile) -> ProfileResponse:
         education_level_name=p.education_level.name if p.education_level else None,
         informal_work=p.informal_work,
         self_taught_skills=p.self_taught_skills,
+        monthly_gross_income=p.monthly_gross_income,
+        gender=p.gender,
         language_ids=[ul.language_id for ul in p.languages],
         current_step=p.current_step,
         is_complete=p.is_complete,
@@ -102,6 +104,10 @@ def update_profile(
         profile.informal_work = data.informal_work
     if data.self_taught_skills is not None:
         profile.self_taught_skills = data.self_taught_skills
+    if data.monthly_gross_income is not None:
+        profile.monthly_gross_income = data.monthly_gross_income
+    if data.gender is not None:
+        profile.gender = data.gender
     if data.language_ids is not None:
         db.execute(
             UserLanguage.__table__.delete().where(UserLanguage.profile_id == profile.id)

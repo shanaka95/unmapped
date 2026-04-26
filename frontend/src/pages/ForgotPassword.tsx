@@ -23,7 +23,7 @@ export default function ForgotPassword() {
     if (result.data) {
       setSuccess(true)
     } else {
-      setError(result.error || 'Something went wrong')
+      setError(result.error || t('api.somethingWentWrong'))
     }
 
     setIsSubmitting(false)

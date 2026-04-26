@@ -234,7 +234,7 @@ export default function ProfessionMatch() {
           </div>
 
           {/* Career cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {recommendations.map((rec) => {
               const s = rankStyles[rec.rank] || rankStyles[3]
               const isExpanded = expandedRank === rec.rank
@@ -345,7 +345,7 @@ export default function ProfessionMatch() {
               onClick={() => { localStorage.setItem('career_path_shown', 'true'); navigate('/dashboard') }}
               className="font-poppins text-label-sm border border-outline-variant px-8 py-4 rounded-default uppercase tracking-wider hover:border-primary hover:text-primary transition-colors duration-300 cursor-pointer"
             >
-              Skip to Dashboard
+              {t('professionMatch.skipToDashboard')}
             </button>
           </div>
         </div>

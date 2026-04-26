@@ -31,7 +31,7 @@ export default function ResetPassword() {
     setFieldErrors({})
 
     if (!token) {
-      setFormError('Invalid or missing reset token')
+      setFormError(t('api.invalidResetToken'))
       return
     }
 
@@ -42,7 +42,7 @@ export default function ResetPassword() {
     if (result.data) {
       setSuccess(true)
     } else {
-      setFormError(result.error || 'Reset failed')
+      setFormError(result.error || t('api.resetFailed'))
     }
 
     setIsSubmitting(false)

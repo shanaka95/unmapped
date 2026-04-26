@@ -27,7 +27,7 @@ export default function Login() {
       login(result.data.user, result.data.access_token)
       navigate(result.data.user.role === 'admin' ? '/admin' : '/dashboard')
     } else {
-      setError(result.error || 'Login failed')
+      setError(result.error || t('api.loginFailed'))
     }
 
     setIsSubmitting(false)

@@ -17,6 +17,8 @@ class ProfileResponse(BaseModel):
     education_level_name: str | None = None
     informal_work: str | None = None
     self_taught_skills: str | None = None
+    monthly_gross_income: float | None = None
+    gender: str | None = None
     language_ids: list[int] = []
     current_step: int = 1
     is_complete: bool = False
@@ -35,6 +37,8 @@ class ProfileUpdate(BaseModel):
     language_ids: list[int] | None = None
     informal_work: str | None = None
     self_taught_skills: str | None = None
+    monthly_gross_income: float | None = None
+    gender: str | None = None
     current_step: int | None = None
     is_complete: bool | None = None
 

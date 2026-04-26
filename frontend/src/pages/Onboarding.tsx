@@ -7,7 +7,7 @@ import { classifyLocation } from '../api/settlements'
 import { listWorkExperiences, createWorkExperience, updateWorkExperience, deleteWorkExperience, type WorkExperience } from '../api/workExperiences'
 import Footer from '../components/Footer'
 
-const TOTAL_STEPS = 7
+const TOTAL_STEPS = 8
 
 const SETTLEMENT_TYPES = [
   { value: 'urban', label: 'Urban' },
@@ -34,6 +34,7 @@ export default function Onboarding() {
 
   // Form fields
   const [dob, setDob] = useState('')
+  const [gender, setGender] = useState<string | null>(null)
   const [country, setCountry] = useState('')
   const [countryName, setCountryName] = useState('')
   const [region, setRegion] = useState('')
@@ -60,6 +61,9 @@ export default function Onboarding() {
 
   // Self-taught skills
   const [selfTaughtSkills, setSelfTaughtSkills] = useState('')
+
+  // Monthly gross income
+  const [monthlyGrossIncome, setMonthlyGrossIncome] = useState('')
 
   // Reference data
   const [countries, setCountries] = useState<Country[]>([])
@@ -103,6 +107,8 @@ export default function Onboarding() {
         setEducationLevelId(p.education_level_id)
         setInformalWork(p.informal_work ?? '')
         setSelfTaughtSkills(p.self_taught_skills ?? '')
+        setMonthlyGrossIncome(p.monthly_gross_income ? String(p.monthly_gross_income) : '')
+        setGender(p.gender ?? null)
         setSelectedLangIds(p.language_ids ?? [])
       }
       if (countriesRes.data) {
@@ -136,7 +142,7 @@ export default function Onboarding() {
 
   async function handleNext() {
     if (step === 1) {
-      const ok = await saveStep(2, { date_of_birth: dob || null })
+      const ok = await saveStep(2, { date_of_birth: dob || null, gender })
       if (ok) setStep(2)
     } else if (step === 2) {
       const ok = await saveStep(3, {
@@ -160,6 +166,10 @@ export default function Onboarding() {
     } else if (step === 6) {
       const ok = await saveStep(7, { self_taught_skills: selfTaughtSkills || null })
       if (ok) setStep(7)
+    } else if (step === 7) {
+      const income = monthlyGrossIncome ? parseFloat(monthlyGrossIncome) : null
+      const ok = await saveStep(8, { monthly_gross_income: income })
+      if (ok) setStep(8)
     }
   }
 
@@ -170,12 +180,14 @@ export default function Onboarding() {
   async function handleComplete() {
     setSaving(true)
     setError('')
+    const income = monthlyGrossIncome ? parseFloat(monthlyGrossIncome) : null
     const res = await updateProfile({
       language_ids: selectedLangIds,
       informal_work: informalWork || null,
       self_taught_skills: selfTaughtSkills || null,
+      monthly_gross_income: income,
       is_complete: true,
-      current_step: 7,
+      current_step: 8,
     })
     if (res.data) {
       navigate('/career-assistant', { replace: true })
@@ -421,7 +433,9 @@ export default function Onboarding() {
             ? true // informal work is optional
             : step === 6
               ? true // self-taught skills is optional
-              : selectedLangIds.length > 0
+              : step === 7
+                ? true // monthly income is optional
+                : selectedLangIds.length > 0
 
   return (
     <div className="bg-background text-on-surface antialiased min-h-screen flex flex-col font-poppins text-body-md">
@@ -463,6 +477,26 @@ export default function Onboarding() {
                 <p className="font-poppins text-body-lg text-on-surface-variant mt-2">
                   {t('onboarding.subtitle')}
                 </p>
+              </div>
+              <div className="flex flex-col gap-unit">
+                <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                  {t('onboarding.gender')}
+                </label>
+                <div className="flex gap-3">
+                  {['male', 'female', 'other'].map(g => (
+                    <button
+                      key={g}
+                      onClick={() => setGender(g)}
+                      className={`flex-1 px-4 py-3 rounded-xl font-poppins text-label-sm uppercase tracking-wider transition-all duration-300 cursor-pointer border ${
+                        gender === g
+                          ? 'bg-primary text-on-primary border-primary'
+                          : 'border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary'
+                      }`}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="flex flex-col gap-unit">
                 <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
@@ -885,8 +919,36 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 7: Languages */}
+          {/* Step 7: Monthly Gross Income */}
           {step === 7 && (
+            <div className="flex flex-col gap-6">
+              <div className="text-center">
+                <h1 className="font-poppins text-h1 text-on-surface">
+                  {t('onboarding.monthlyIncome')}
+                </h1>
+                <p className="font-poppins text-body-md text-on-surface-variant mt-2">
+                  {t('onboarding.monthlyIncomeSubtitle')}
+                </p>
+              </div>
+              <div className="flex flex-col gap-unit">
+                <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                  {t('onboarding.monthlyGrossIncome')}
+                </label>
+                <input
+                  type="number"
+                  value={monthlyGrossIncome}
+                  onChange={e => setMonthlyGrossIncome(e.target.value)}
+                  placeholder={t('onboarding.incomePlaceholder')}
+                  min="0"
+                  step="0.01"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-3 text-on-surface text-body-lg focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Step 8: Languages */}
+          {step === 8 && (
             <div className="flex flex-col gap-6">
               <div className="text-center">
                 <h1 className="font-poppins text-h1 text-on-surface">
