@@ -152,5 +152,32 @@
     "placeholder": "Seleccionar...",
     "search": "Buscar...",
     "noResults": "Sin resultados"
+  },
+  "onboarding": {
+    "welcome": "Configuremos tu perfil",
+    "subtitle": "Solo tomará un minuto",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "complete": "Comenzar",
+    "dateOfBirth": "Fecha de nacimiento",
+    "location": "¿Dónde estás?",
+    "locationSubtitle": "Ayúdanos a entender tu contexto local",
+    "useMyLocation": "Usar mi ubicación",
+    "detecting": "Detectando ubicación...",
+    "or": "o ingresa manualmente",
+    "country": "País",
+    "searchCountry": "Buscar países...",
+    "region": "Región / Estado",
+    "regionPlaceholder": "ej. Madrid",
+    "city": "Ciudad",
+    "cityPlaceholder": "ej. Barcelona",
+    "settlementType": "Tipo de asentamiento",
+    "detected": "Detectado",
+    "education": "Educación",
+    "educationSubtitle": "Selecciona tu nivel educativo más alto",
+    "languages": "Idiomas",
+    "languagesSubtitle": "Selecciona todos los idiomas que hablas",
+    "popular": "Populares",
+    "searchLanguage": "Buscar idiomas..."
   }
 }

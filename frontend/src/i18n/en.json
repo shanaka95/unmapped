@@ -125,6 +125,14 @@
       "2": "2 — Sub-Major",
       "3": "3 — Minor",
       "4": "4 — Unit"
+    },
+    "languages": "Languages",
+    "language": {
+      "addLanguage": "Add Language",
+      "searchPlaceholder": "Search languages by name or code...",
+      "noLanguages": "No languages linked to this country.",
+      "mapHint": "Click a country to manage its languages",
+      "backToMap": "Back to map"
     }
   },
   "validation": {
@@ -152,5 +160,32 @@
     "placeholder": "Select...",
     "search": "Search...",
     "noResults": "No results"
+  },
+  "onboarding": {
+    "welcome": "Let's set up your profile",
+    "subtitle": "This will only take a minute",
+    "continue": "Continue",
+    "back": "Back",
+    "complete": "Get Started",
+    "dateOfBirth": "Date of Birth",
+    "location": "Where are you?",
+    "locationSubtitle": "Help us understand your local context",
+    "useMyLocation": "Use my location",
+    "detecting": "Detecting location...",
+    "or": "or enter manually",
+    "country": "Country",
+    "searchCountry": "Search countries...",
+    "region": "Region / State",
+    "regionPlaceholder": "e.g. California",
+    "city": "City",
+    "cityPlaceholder": "e.g. San Francisco",
+    "settlementType": "Settlement Type",
+    "detected": "Detected",
+    "education": "Education",
+    "educationSubtitle": "Select your highest education level",
+    "languages": "Languages",
+    "languagesSubtitle": "Select all languages you speak",
+    "popular": "Popular",
+    "searchLanguage": "Search languages..."
   }
 }

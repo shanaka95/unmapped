@@ -46,7 +46,7 @@ def get_profile(
 ):
     profile = db.execute(
         select(UserProfile).where(UserProfile.user_id == user_id)
-    ).scalar_one_or_none()
+    ).scalars().first()
 
     if not profile:
         profile = UserProfile(user_id=user_id)
@@ -65,7 +65,7 @@ def update_profile(
 ):
     profile = db.execute(
         select(UserProfile).where(UserProfile.user_id == user_id)
-    ).scalar_one_or_none()
+    ).scalars().first()
 
     if not profile:
         profile = UserProfile(user_id=user_id)
@@ -89,16 +89,18 @@ def update_profile(
     if data.education_level_id is not None:
         edu = db.execute(
             select(EducationLevel).where(EducationLevel.id == data.education_level_id)
-        ).scalar_one_or_none()
+        ).scalars().first()
         if not edu:
             raise HTTPException(status_code=400, detail="Invalid education_level_id")
         profile.education_level_id = data.education_level_id
     if data.language_ids is not None:
-        db.query(UserLanguage).filter(UserLanguage.profile_id == profile.id).delete()
+        db.execute(
+            UserLanguage.__table__.delete().where(UserLanguage.profile_id == profile.id)
+        )
         for lang_id in data.language_ids:
             lang = db.execute(
                 select(Language).where(Language.id == lang_id)
-            ).scalar_one_or_none()
+            ).scalars().first()
             if not lang:
                 raise HTTPException(status_code=400, detail=f"Invalid language_id: {lang_id}")
             db.add(UserLanguage(profile_id=profile.id, language_id=lang_id))

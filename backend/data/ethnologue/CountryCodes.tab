@@ -1,1 +1,243 @@
-<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="content-security-policy" content="default-src &#39;none&#39;; script-src &#39;nonce-cIcyK6oObPF6PFmOYsY0mn&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}body{display:flex;flex-direction:column;height:100vh;min-height:100vh}.main-content{margin:8rem auto;padding-left:1.5rem;max-width:60rem}@media (width <= 720px){.main-content{margin-top:4rem}}#challenge-error-text{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0IyMEYwMyIgZD0iTTE2IDNhMTMgMTMgMCAxIDAgMTMgMTNBMTMuMDE1IDEzLjAxNSAwIDAgMCAxNiAzbTAgMjRhMTEgMTEgMCAxIDEgMTEtMTEgMTEuMDEgMTEuMDEgMCAwIDEtMTEgMTEiLz48cGF0aCBmaWxsPSIjQjIwRjAzIiBkPSJNMTcuMDM4IDE4LjYxNUgxNC44N0wxNC41NjMgOS41aDIuNzgzem0tMS4wODQgMS40MjdxLjY2IDAgMS4wNTcuMzg4LjQwNy4zODkuNDA3Ljk5NCAwIC41OTYtLjQwNy45ODQtLjM5Ny4zOS0xLjA1Ny4zODktLjY1IDAtMS4wNTYtLjM4OS0uMzk4LS4zODktLjM5OC0uOTg0IDAtLjU5Ny4zOTgtLjk4NS40MDYtLjM5NyAxLjA1Ni0uMzk3Ii8+PC9zdmc+");background-repeat:no-repeat;background-size:contain;padding-left:34px}</style><meta http-equiv="refresh" content="360"></head><body><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script nonce="cIcyK6oObPF6PFmOYsY0mn">(function(){window._cf_chl_opt = {cFPWv: 'g',cH: '.IUBUi1xkv1CLBOuGPlz87awG1EelFyLythLhAcxz4M-1777190576-1.2.1.1-1Yxxj3vYhUOWgrdMLp66NI3zJ0EBogbaK.wmoHUjF6q0ZR8D8iiGasWi9z1B3f1A',cITimeS: '1777190576',cN: 'cIcyK6oObPF6PFmOYsY0mn',cRay: '9f24116c4919d20a',cTplB: '0',cTplC:0,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/wp-content/uploads/2025/CountryCodes.tab?__cf_chl_tk=za5aLeGG1LKipBczLTLO_BymWGiChq.6maLwNh4nLYg-1777190576-1.0.1.1-F2F31xdmp.wRLDOh4Wj0.Zk9LIUvV31C.8mWNQ9hsw0",cvId: '3',cZone: 'www.ethnologue.com',fa:"/wp-content/uploads/2025/CountryCodes.tab?__cf_chl_f_tk=za5aLeGG1LKipBczLTLO_BymWGiChq.6maLwNh4nLYg-1777190576-1.0.1.1-F2F31xdmp.wRLDOh4Wj0.Zk9LIUvV31C.8mWNQ9hsw0",md: 'AbzhvWkivEP3iban_WgH977_x2egXJ1Wckgl7meW4vk-1777190576-1.2.1.1-b7m5heHeTbwNXHKXTm4wXWW6sPv45DZcnGIlWie6sv3sxiopAI54fOWT4Mrl_fNGJiAzPiN7lqLTj9MvgYdmm.CEWsKXPG6JTNiUvUzaMXStaor5cTXGMSkWUJhpqN0BaECygE4X6M_f19QY1dVISGSFGaWGzPmvY8PfhdbwimFjTxUj5dYHUnz02vmaCMDv9GR.gL2a_M2nqgUzsa81Ys6_BjDh7HNseGxKI...r5zj6aPKWYm5xZiD53i_3M.SLXaciMCHuWWApImyZy8ovhcQr62VQjf9Q5xrl0KKB1NPY5VgcoPsynIXYl5qAv5lSgyFhBXFL5oZ6WmshVrMujNNDNxgtlthCxNYzPNJ.uD7CljqDy2p11BCyeZCwFAAi2ClbTdO1klfdihBb_BNr9f1JPf0Nh5djcmhngBFWD.SoeEmCJto8P7V_UlXkfy9CN9XSpBHTqOnIK_p7WWMqg2oHukqzfYGgX98bDuVFdvnZ0YPNkf1qYs0LNekgHwKkUQTCGbpnBPxUkoT_v.Z3pHxRUqFFPe2YJkvO_SS9qz0aJDAJGxKZ7MkYp94esqHHV1OFhFmr6l_Jl6ixutyb3FKH3eO8ozc_kCZFKPHyqwoDflylj_1MsdqJp09u8ZWto.Vcp2Cp0ncycXHu68OVnrB_OyZlhQD37efbUsGAvFe_VWNqR4Zkj5ficCXHFnu1F.U9WwsOvIbrAPc9zf0lw3lo1DFEKHw_WKOepHKDVkFEEnRVeVn5eu7PpWCErG9sWgC_o8oyeF.Rd7Z6aaYyveU_F7u86nN1ZSCkypDqkmBDm_5wM1Ryf07XAgeA3ywg0WkR_0BN_Vh2Vbdp_Z4JDLnkUpBgKK4nSAFYwNBEKYid1rxwaXqRfdYs5Z3D77uOEl3NBgeIpeIFJvzUKEIbBDPQARR6uFgrrmlb9M25ZwTpotZGcYugRCBdd10qXIA.qwXwgC3BrqisJBspjcB1SOioIOTwy8vNSujD3u5jo5hFL5ZP7wPpYdN7Sf0wnFe',mdrd: 'CggCgE5QrSy50jiglF5LZAB.PwEzG9Sa1.3ONdsDTWM-1777190576-1.2.1.1-FSjxgxCwxgiQvq8gKQtBvf4tBCvUf81IRKCl1XpRjOifzSCc1WyqzelFVvq9PZjKLv74Ef2pxughaGmSFIYsUIPSzyZnQl042qtchzGWJz7QqKGc0zz4hnR7cl4E6Es0Rz.zKwV5cvgxTbNU5B0ZB7TyfbhkN3r8.JhQehSpvLYgqzg.g1gFmLHBoW27lPotGxaM4vjwKmWQHwCGLNYaEws7vRKl2Dnv.9P_td2TNov6fIx8_TZnZjZyVkuQhbE6UFhj52P6jC6Ft8rf.LWolQ',};var a = document.createElement('script');a.nonce = 'cIcyK6oObPF6PFmOYsY0mn';a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=9f24116c4919d20a';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/wp-content/uploads/2025/CountryCodes.tab?__cf_chl_rt_tk=za5aLeGG1LKipBczLTLO_BymWGiChq.6maLwNh4nLYg-1777190576-1.0.1.1-F2F31xdmp.wRLDOh4Wj0.Zk9LIUvV31C.8mWNQ9hsw0"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></body></html>
+CountryID	Name	Area
+AD	Andorra	Europe
+AE	United Arab Emirates	Asia
+AF	Afghanistan	Asia
+AG	Antigua and Barbuda	Americas
+AI	Anguilla	Americas
+AL	Albania	Europe
+AM	Armenia	Asia
+AO	Angola	Africa
+AR	Argentina	Americas
+AS	American Samoa	Pacific
+AT	Austria	Europe
+AU	Australia	Pacific
+AW	Aruba	Americas
+AX	Aland Islands	Europe
+AZ	Azerbaijan	Asia
+BA	Bosnia and Herzegovina	Europe
+BB	Barbados	Americas
+BD	Bangladesh	Asia
+BE	Belgium	Europe
+BF	Burkina Faso	Africa
+BG	Bulgaria	Europe
+BH	Bahrain	Asia
+BI	Burundi	Africa
+BJ	Benin	Africa
+BL	Saint Barthélemy	Americas
+BM	Bermuda	Americas
+BN	Brunei	Asia
+BO	Bolivia	Americas
+BQ	Caribbean Netherlands	Americas
+BR	Brazil	Americas
+BS	Bahamas	Americas
+BT	Bhutan	Asia
+BW	Botswana	Africa
+BY	Belarus	Europe
+BZ	Belize	Americas
+CA	Canada	Americas
+CC	Cocos (Keeling) Islands	Pacific
+CD	Democratic Republic of the Congo	Africa
+CF	Central African Republic	Africa
+CG	Congo	Africa
+CH	Switzerland	Europe
+CI	Côte d’Ivoire	Africa
+CK	Cook Islands	Pacific
+CL	Chile	Americas
+CM	Cameroon	Africa
+CN	China	Asia
+CO	Colombia	Americas
+CR	Costa Rica	Americas
+CU	Cuba	Americas
+CV	Cape Verde	Africa
+CW	Curacao	Americas
+CX	Christmas Island	Pacific
+CY	Cyprus	Asia
+CZ	Czechia	Europe
+DE	Germany	Europe
+DJ	Djibouti	Africa
+DK	Denmark	Europe
+DM	Dominica	Americas
+DO	Dominican Republic	Americas
+DZ	Algeria	Africa
+EC	Ecuador	Americas
+EE	Estonia	Europe
+EG	Egypt	Africa
+EH	Western Sahara	Africa
+ER	Eritrea	Africa
+ES	Spain	Europe
+ET	Ethiopia	Africa
+FI	Finland	Europe
+FJ	Fiji	Pacific
+FK	Falkland Islands	Americas
+FM	Micronesia	Pacific
+FO	Faroe Islands	Europe
+FR	France	Europe
+GA	Gabon	Africa
+GB	United Kingdom	Europe
+GD	Grenada	Americas
+GE	Georgia	Asia
+GF	French Guiana	Americas
+GG	Guernsey	Europe
+GH	Ghana	Africa
+GI	Gibraltar	Europe
+GL	Greenland	Americas
+GM	Gambia	Africa
+GN	Guinea	Africa
+GP	Guadeloupe	Americas
+GQ	Equatorial Guinea	Africa
+GR	Greece	Europe
+GT	Guatemala	Americas
+GU	Guam	Pacific
+GW	Guinea-Bissau	Africa
+GY	Guyana	Americas
+HK	Hong Kong	Asia
+HN	Honduras	Americas
+HR	Croatia	Europe
+HT	Haiti	Americas
+HU	Hungary	Europe
+ID	Indonesia	Asia
+IE	Ireland	Europe
+IL	Israel	Asia
+IM	Isle of Man	Europe
+IN	India	Asia
+IO	British Indian Ocean Territory	Asia
+IQ	Iraq	Asia
+IR	Iran	Asia
+IS	Iceland	Europe
+IT	Italy	Europe
+JE	Jersey	Europe
+JM	Jamaica	Americas
+JO	Jordan	Asia
+JP	Japan	Asia
+KE	Kenya	Africa
+KG	Kyrgyzstan	Asia
+KH	Cambodia	Asia
+KI	Kiribati	Pacific
+KM	Comoros	Africa
+KN	Saint Kitts and Nevis	Americas
+KP	North Korea	Asia
+KR	South Korea	Asia
+KW	Kuwait	Asia
+KY	Cayman Islands	Americas
+KZ	Kazakhstan	Asia
+LA	Laos	Asia
+LB	Lebanon	Asia
+LC	Saint Lucia	Americas
+LI	Liechtenstein	Europe
+LK	Sri Lanka	Asia
+LR	Liberia	Africa
+LS	Lesotho	Africa
+LT	Lithuania	Europe
+LU	Luxembourg	Europe
+LV	Latvia	Europe
+LY	Libya	Africa
+MA	Morocco	Africa
+MC	Monaco	Europe
+MD	Moldova	Europe
+ME	Montenegro	Europe
+MF	Saint Martin	Americas
+MG	Madagascar	Africa
+MH	Marshall Islands	Pacific
+MK	North Macedonia	Europe
+ML	Mali	Africa
+MM	Myanmar	Asia
+MN	Mongolia	Asia
+MO	Macao	Asia
+MP	Northern Mariana Islands	Pacific
+MQ	Martinique	Americas
+MR	Mauritania	Africa
+MS	Montserrat	Americas
+MT	Malta	Europe
+MU	Mauritius	Africa
+MV	Maldives	Asia
+MW	Malawi	Africa
+MX	Mexico	Americas
+MY	Malaysia	Asia
+MZ	Mozambique	Africa
+NA	Namibia	Africa
+NC	New Caledonia	Pacific
+NE	Niger	Africa
+NF	Norfolk Island	Pacific
+NG	Nigeria	Africa
+NI	Nicaragua	Americas
+NL	Netherlands	Europe
+NO	Norway	Europe
+NP	Nepal	Asia
+NR	Nauru	Pacific
+NU	Niue	Pacific
+NZ	New Zealand	Pacific
+OM	Oman	Asia
+PA	Panama	Americas
+PE	Peru	Americas
+PF	French Polynesia	Pacific
+PG	Papua New Guinea	Pacific
+PH	Philippines	Asia
+PK	Pakistan	Asia
+PL	Poland	Europe
+PM	Saint Pierre and Miquelon	Americas
+PN	Pitcairn	Pacific
+PR	Puerto Rico	Americas
+PS	Palestine	Asia
+PT	Portugal	Europe
+PW	Palau	Pacific
+PY	Paraguay	Americas
+QA	Qatar	Asia
+RE	Réunion	Africa
+RO	Romania	Europe
+RS	Serbia	Europe
+RU	Russian Federation	Europe
+RW	Rwanda	Africa
+SA	Saudi Arabia	Asia
+SB	Solomon Islands	Pacific
+SC	Seychelles	Africa
+SD	Sudan	Africa
+SE	Sweden	Europe
+SG	Singapore	Asia
+SH	Saint Helena	Africa
+SI	Slovenia	Europe
+SK	Slovakia	Europe
+SL	Sierra Leone	Africa
+SM	San Marino	Europe
+SN	Senegal	Africa
+SO	Somalia	Africa
+SR	Suriname	Americas
+SS	South Sudan	Africa
+ST	São Tomé e Príncipe	Africa
+SV	El Salvador	Americas
+SX	Sint Maarten	Americas
+SY	Syria	Asia
+SZ	Eswatini	Africa
+TC	Turks and Caicos Islands	Americas
+TD	Chad	Africa
+TG	Togo	Africa
+TH	Thailand	Asia
+TJ	Tajikistan	Asia
+TK	Tokelau	Pacific
+TL	East Timor	Asia
+TM	Turkmenistan	Asia
+TN	Tunisia	Africa
+TO	Tonga	Pacific
+TR	Turkey	Asia
+TT	Trinidad and Tobago	Americas
+TV	Tuvalu	Pacific
+TW	Taiwan	Asia
+TZ	Tanzania	Africa
+UA	Ukraine	Europe
+UG	Uganda	Africa
+US	United States	Americas
+UY	Uruguay	Americas
+UZ	Uzbekistan	Asia
+VA	Vatican City	Europe
+VC	Saint Vincent and the Grenadines	Americas
+VE	Venezuela	Americas
+VG	British Virgin Islands	Americas
+VI	U.S. Virgin Islands	Americas
+VN	Vietnam	Asia
+VU	Vanuatu	Pacific
+WF	Wallis and Futuna	Pacific
+WS	Samoa	Pacific
+YE	Yemen	Asia
+YT	Mayotte	Africa
+ZA	South Africa	Africa
+ZM	Zambia	Africa
+ZW	Zimbabwe	Africa

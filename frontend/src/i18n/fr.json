@@ -152,5 +152,32 @@
     "placeholder": "Sélectionner...",
     "search": "Rechercher...",
     "noResults": "Aucun résultat"
+  },
+  "onboarding": {
+    "welcome": "Configurons votre profil",
+    "subtitle": "Cela ne prendra qu'une minute",
+    "continue": "Continuer",
+    "back": "Retour",
+    "complete": "Commencer",
+    "dateOfBirth": "Date de naissance",
+    "location": "Où êtes-vous ?",
+    "locationSubtitle": "Aidez-nous à comprendre votre contexte local",
+    "useMyLocation": "Utiliser ma position",
+    "detecting": "Détection en cours...",
+    "or": "ou saisir manuellement",
+    "country": "Pays",
+    "searchCountry": "Rechercher un pays...",
+    "region": "Région / État",
+    "regionPlaceholder": "ex. Île-de-France",
+    "city": "Ville",
+    "cityPlaceholder": "ex. Paris",
+    "settlementType": "Type d'établissement",
+    "detected": "Détecté",
+    "education": "Éducation",
+    "educationSubtitle": "Sélectionnez votre niveau d'études le plus élevé",
+    "languages": "Langues",
+    "languagesSubtitle": "Sélectionnez toutes les langues que vous parlez",
+    "popular": "Populaires",
+    "searchLanguage": "Rechercher une langue..."
   }
 }

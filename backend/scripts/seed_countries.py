@@ -1,17 +1,14 @@
-"""Seed countries table from restcountries.com API."""
+"""Seed countries table from Ethnologue CountryCodes.tab."""
 
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import json
-import urllib.request
-
 from app.database import SessionLocal, engine, Base
 from app.models.country import Country
 
-COUNTRIES_URL = "https://restcountries.com/v3.1/all?fields=cca2,name"
+TAB_FILE = Path(__file__).resolve().parent.parent / "data" / "ethnologue" / "CountryCodes.tab"
 
 
 def seed():
@@ -23,18 +20,20 @@ def seed():
             print(f"Countries already exist ({existing} rows). Skipping.")
             return
 
-        print("Fetching countries from restcountries.com...")
-        req = urllib.request.Request(COUNTRIES_URL, headers={"User-Agent": "Unmapped/1.0"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode())
-
+        print(f"Reading countries from {TAB_FILE}...")
         batch = []
-        for entry in data:
-            code = entry.get("cca2", "")
-            name = entry.get("name", {}).get("common", "")
-            if not code or not name:
-                continue
-            batch.append(Country(code=code, name=name))
+        with open(TAB_FILE, "r", encoding="utf-8") as f:
+            header = f.readline().strip().split("\t")
+            for line in f:
+                parts = line.strip().split("\t")
+                if len(parts) < 3:
+                    continue
+                code = parts[0]
+                name = parts[1]
+                area = parts[2]
+                if not code or not name:
+                    continue
+                batch.append(Country(code=code, name=name, area=area))
 
         session.add_all(batch)
         session.commit()

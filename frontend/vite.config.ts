@@ -15,4 +15,16 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    include: ['prop-types', 'react-simple-maps'],
+    esbuildOptions: {
+      target: 'esnext',
+    },
+  },
+  build: {
+    target: 'esnext',
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
 })

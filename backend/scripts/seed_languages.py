@@ -1,4 +1,4 @@
-"""Seed languages table with ~100 most spoken languages (ISO 639-2 codes)."""
+"""Seed languages table and language_country junction from Ethnologue tab files."""
 
 import sys
 from pathlib import Path
@@ -7,101 +7,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.database import SessionLocal, engine, Base
 from app.models.language import Language
+from app.models.country import Country
+from app.models.association import language_country
 
-LANGUAGES = [
-    ("zho", "Chinese"),
-    ("spa", "Spanish"),
-    ("eng", "English"),
-    ("hin", "Hindi"),
-    ("ara", "Arabic"),
-    ("por", "Portuguese"),
-    ("ben", "Bengali"),
-    ("rus", "Russian"),
-    ("jpn", "Japanese"),
-    ("fra", "French"),
-    ("deu", "German"),
-    ("kor", "Korean"),
-    ("tur", "Turkish"),
-    ("tam", "Tamil"),
-    ("tel", "Telugu"),
-    ("vie", "Vietnamese"),
-    ("urd", "Urdu"),
-    ("guj", "Gujarati"),
-    ("pol", "Polish"),
-    ("ukr", "Ukrainian"),
-    ("kan", "Kannada"),
-    ("mal", "Malayalam"),
-    ("ita", "Italian"),
-    ("pan", "Punjabi (Gurmukhi)"),
-    ("yor", "Yoruba"),
-    ("swh", "Swahili"),
-    ("mai", "Maithili"),
-    ("mya", "Burmese"),
-    ("tha", "Thai"),
-    ("sun", "Sundanese"),
-    ("aze", "Azerbaijani"),
-    ("uzb", "Uzbek"),
-    ("hin", "Hindi (Fiji)"),
-    ("ron", "Romanian"),
-    ("nld", "Dutch"),
-    ("hau", "Hausa"),
-    ("fas", "Persian"),
-    ("amh", "Amharic"),
-    ("nob", "Norwegian Bokmål"),
-    ("kat", "Georgian"),
-    ("ces", "Czech"),
-    ("sin", "Sinhala"),
-    ("som", "Somali"),
-    ("hun", "Hungarian"),
-    ("ell", "Greek"),
-    ("kin", "Kinyarwanda"),
-    ("ibo", "Igbo"),
-    ("zul", "Zulu"),
-    ("heb", "Hebrew"),
-    ("swe", "Swedish"),
-    ("dan", "Danish"),
-    ("fin", "Finnish"),
-    ("nor", "Norwegian"),
-    ("slk", "Slovak"),
-    ("bul", "Bulgarian"),
-    ("hrv", "Croatian"),
-    ("srp", "Serbian"),
-    ("bel", "Belarusian"),
-    ("sqi", "Albanian"),
-    ("lit", "Lithuanian"),
-    ("lav", "Latvian"),
-    ("slv", "Slovenian"),
-    ("est", "Estonian"),
-    ("mal", "Malay"),
-    ("ind", "Indonesian"),
-    ("tgl", "Tagalog"),
-    ("ceb", "Cebuano"),
-    ("ilo", "Ilocano"),
-    ("hil", "Hiligaynon"),
-    ("kaz", "Kazakh"),
-    ("khm", "Khmer"),
-    ("lao", "Lao"),
-    ("nep", "Nepali"),
-    ("pus", "Pashto"),
-    ("kur", "Kurdish"),
-    ("kat", "Georgian"),
-    ("arm", "Armenian"),
-    ("mon", "Mongolian"),
-    ("tzm", "Central Atlas Tamazight"),
-    ("ber", "Berber"),
-    ("aka", "Akan"),
-    ("lug", "Ganda"),
-    ("orm", "Oromo"),
-    ("tir", "Tigrinya"),
-    ("mlg", "Malagasy"),
-    ("mri", "Maori"),
-    ("haw", "Hawaiian"),
-    ("smo", "Samoan"),
-    ("ton", "Tongan"),
-    ("fij", "Fijian"),
-    ("tpi", "Tok Pisin"),
-    ("bis", "Bislama"),
-]
+TAB_DIR = Path(__file__).resolve().parent.parent / "data" / "ethnologue"
+LANGUAGE_CODES_FILE = TAB_DIR / "LanguageCodes.tab"
+LANGUAGE_INDEX_FILE = TAB_DIR / "LanguageIndex.tab"
 
 
 def seed():
@@ -113,17 +24,58 @@ def seed():
             print(f"Languages already exist ({existing} rows). Skipping.")
             return
 
-        seen = set()
+        # Read LanguageCodes.tab for language info
+        print(f"Reading languages from {LANGUAGE_CODES_FILE}...")
+        lang_code_to_id = {}
         batch = []
-        for code, name in LANGUAGES:
-            if code in seen:
-                continue
-            seen.add(code)
-            batch.append(Language(code=code, name=name))
+        seen = set()
+        with open(LANGUAGE_CODES_FILE, "r", encoding="utf-8") as f:
+            header = f.readline().strip().split("\t")
+            for line in f:
+                parts = line.strip().split("\t")
+                if len(parts) < 4:
+                    continue
+                lang_id = parts[0]  # ISO 639-3 code
+                name = parts[3]
+                if not lang_id or not name or lang_id in seen:
+                    continue
+                seen.add(lang_id)
+                lang = Language(code=lang_id, name=name)
+                batch.append(lang)
+                lang_code_to_id[lang_id] = len(batch) - 1
 
         session.add_all(batch)
         session.commit()
         print(f"Seeded {len(batch)} languages")
+
+        # Build language_id lookup: code -> db id
+        lang_rows = {row.code: row.id for row in session.query(Language).all()}
+
+        # Build country_id lookup: code (alpha-2) -> db id
+        country_rows = {row.code: row.id for row in session.query(Country).all()}
+
+        # Read LanguageIndex.tab for country-language mappings
+        print(f"Reading language-country mappings from {LANGUAGE_INDEX_FILE}...")
+        mappings = set()
+        with open(LANGUAGE_INDEX_FILE, "r", encoding="utf-8") as f:
+            header = f.readline().strip().split("\t")
+            for line in f:
+                parts = line.strip().split("\t")
+                if len(parts) < 2:
+                    continue
+                lang_code = parts[0]
+                country_code = parts[1]
+                if lang_code in lang_rows and country_code in country_rows:
+                    mappings.add((lang_rows[lang_code], country_rows[country_code]))
+
+        # Insert junction entries
+        print(f"Inserting {len(mappings)} language-country mappings...")
+        for lang_id, country_id in mappings:
+            session.execute(
+                language_country.insert().values(language_id=lang_id, country_id=country_id)
+            )
+        session.commit()
+        print("Done seeding language-country mappings.")
 
 
 if __name__ == "__main__":

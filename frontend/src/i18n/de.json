@@ -152,5 +152,32 @@
     "placeholder": "Auswählen...",
     "search": "Suchen...",
     "noResults": "Keine Ergebnisse"
+  },
+  "onboarding": {
+    "welcome": "Lass uns dein Profil einrichten",
+    "subtitle": "Das dauert nur eine Minute",
+    "continue": "Weiter",
+    "back": "Zurück",
+    "complete": "Loslegen",
+    "dateOfBirth": "Geburtsdatum",
+    "location": "Wo bist du?",
+    "locationSubtitle": "Hilf uns, deinen lokalen Kontext zu verstehen",
+    "useMyLocation": "Meinen Standort verwenden",
+    "detecting": "Standort wird ermittelt...",
+    "or": "oder manuell eingeben",
+    "country": "Land",
+    "searchCountry": "Länder suchen...",
+    "region": "Region / Bundesland",
+    "regionPlaceholder": "z.B. Bayern",
+    "city": "Stadt",
+    "cityPlaceholder": "z.B. München",
+    "settlementType": "Siedlungstyp",
+    "detected": "Erkannt",
+    "education": "Bildung",
+    "educationSubtitle": "Wähle deinen höchsten Bildungsabschluss",
+    "languages": "Sprachen",
+    "languagesSubtitle": "Wähle alle Sprachen, die du sprichst",
+    "popular": "Beliebt",
+    "searchLanguage": "Sprachen suchen..."
   }
 }

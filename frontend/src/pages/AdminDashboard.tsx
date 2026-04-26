@@ -15,6 +15,12 @@ import {
   listIscedLevels, listEducationLevels, createEducationLevel,
   deleteEducationLevel, type IscedLevel, type EducationLevel as EducationLevelType,
 } from '../api/educationLevels'
+import {
+  listCountries, listLanguages, getCountry, getCountryLanguages,
+  addLanguageToCountry, removeLanguageFromCountry,
+  type Country, type Language, type LanguageBrief, type CountryWithLanguages,
+} from '../api/languages'
+import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps'
 import InputField from '../components/InputField'
 import Pagination from '../components/Pagination'
 import SearchBar from '../components/SearchBar'
@@ -22,13 +28,14 @@ import SelectField from '../components/SelectField'
 import Footer from '../components/Footer'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 
-type Section = 'overview' | 'sectors' | 'occupations' | 'education'
+type Section = 'overview' | 'sectors' | 'occupations' | 'education' | 'languages'
 
 const SECTION_KEYS: Record<Section, string> = {
   overview: 'admin.overview',
   sectors: 'admin.sectors',
   occupations: 'admin.occupations',
   education: 'admin.education',
+  languages: 'admin.languages',
 }
 
 export default function AdminDashboard() {
@@ -59,7 +66,7 @@ export default function AdminDashboard() {
       <div className="flex flex-grow">
         {/* Left sidebar */}
         <nav className="hidden sm:flex flex-col w-56 border-r border-outline-variant px-4 py-6 gap-unit flex-shrink-0">
-          {(['overview', 'sectors', 'occupations', 'education'] as const).map(s => (
+          {(['overview', 'sectors', 'occupations', 'education', 'languages'] as const).map(s => (
             <button
               key={s}
               onClick={() => setSection(s)}
@@ -83,7 +90,7 @@ export default function AdminDashboard() {
 
         {/* Mobile nav */}
         <div className="sm:hidden flex border-b border-outline-variant w-full">
-          {(['overview', 'sectors', 'occupations', 'education'] as const).map(s => (
+          {(['overview', 'sectors', 'occupations', 'education', 'languages'] as const).map(s => (
             <button
               key={s}
               onClick={() => setSection(s)}
@@ -112,6 +119,7 @@ export default function AdminDashboard() {
             {section === 'sectors' && <SectorsSection />}
             {section === 'occupations' && <OccupationsSection />}
             {section === 'education' && <EducationSection />}
+            {section === 'languages' && <LanguagesSection />}
           </div>
         </main>
       </div>
@@ -1246,6 +1254,255 @@ function EducationSection() {
             />
           )}
         </>
+      )}
+    </div>
+  )
+}
+
+const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
+
+function LanguagesSection() {
+  const { t } = useTranslation()
+  const [countries, setCountries] = useState<Country[]>([])
+  const [languages, setLanguages] = useState<Language[]>([])
+  const [selectedCountry, setSelectedCountry] = useState<CountryWithLanguages | null>(null)
+  const [countryLanguages, setCountryLanguages] = useState<LanguageBrief[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingPanel, setLoadingPanel] = useState(false)
+  const [addSearch, setAddSearch] = useState('')
+  const [addSearchResults, setAddSearchResults] = useState<Language[]>([])
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    async function load() {
+      const [countriesRes, languagesRes] = await Promise.all([listCountries(), listLanguages()])
+      if (countriesRes.data) setCountries(countriesRes.data)
+      if (languagesRes.data) setLanguages(languagesRes.data)
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  async function selectCountry(country: Country) {
+    setLoadingPanel(true)
+    setSelectedCountry(null)
+    setCountryLanguages([])
+    setError('')
+    setAddSearch('')
+    setAddSearchResults([])
+
+    const [countryRes, langRes] = await Promise.all([getCountry(country.id), getCountryLanguages(country.id)])
+    if (countryRes.data) setSelectedCountry(countryRes.data)
+    if (langRes.data) setCountryLanguages(langRes.data)
+    setLoadingPanel(false)
+  }
+
+  function closePanel() {
+    setSelectedCountry(null)
+    setCountryLanguages([])
+    setError('')
+  }
+
+  async function handleAddLanguage(language: Language) {
+    if (!selectedCountry) return
+    const result = await addLanguageToCountry(selectedCountry.id, language.id)
+    if (result.error) {
+      setError(result.error)
+    } else {
+      setCountryLanguages(prev => [...prev, { id: language.id, code: language.code, name: language.name }])
+      setAddSearch('')
+      setAddSearchResults([])
+    }
+  }
+
+  async function handleRemoveLanguage(languageId: number) {
+    if (!selectedCountry) return
+    const result = await removeLanguageFromCountry(selectedCountry.id, languageId)
+    if (result.status === 204 || !result.error) {
+      setCountryLanguages(prev => prev.filter(l => l.id !== languageId))
+    } else {
+      setError(result.error || 'Failed to remove language')
+    }
+  }
+
+  useEffect(() => {
+    if (!addSearch.trim()) {
+      setAddSearchResults([])
+      return
+    }
+    const q = addSearch.toLowerCase()
+    const filtered = languages
+      .filter(l =>
+        l.name.toLowerCase().includes(q) ||
+        l.code.toLowerCase().includes(q)
+      )
+      .filter(l => !countryLanguages.some(cl => cl.id === l.id))
+      .slice(0, 10)
+    setAddSearchResults(filtered)
+  }, [addSearch, languages, countryLanguages])
+
+  return (
+    <div className="flex flex-col gap-8">
+      <h2 className="font-poppins text-h1 text-on-surface">{t('admin.languages')}</h2>
+
+      {loading ? (
+        <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+          {t('common.loading')}
+        </span>
+      ) : (
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* World Map */}
+          <div className={`flex-grow ${selectedCountry ? 'hidden lg:block' : ''}`}>
+            <div className="border border-outline-variant rounded-xl overflow-hidden bg-surface-container-lowest">
+              <ComposableMap projectionConfig={{ scale: 140 }}>
+                <ZoomableGroup center={[0, 0]} zoom={1} minZoom={1} maxZoom={4}>
+                  <Geographies geography={GEO_URL}>
+                    {({ geographies }) =>
+                      geographies.map(geo => {
+                        const countryCode = geo.id?.toString()?.toUpperCase()
+                        const countryData = countries.find(c => c.code === countryCode)
+                        return (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            onClick={() => countryData && selectCountry(countryData)}
+                            style={{
+                              default: {
+                                fill: countryData ? '#1a1c1c' : '#e0e0e0',
+                                stroke: '#ffffff',
+                                strokeWidth: 0.5,
+                                outline: 'none',
+                              },
+                              hover: {
+                                fill: countryData ? '#5e5e5e' : '#e0e0e0',
+                                stroke: '#ffffff',
+                                strokeWidth: 0.5,
+                                outline: 'none',
+                                cursor: countryData ? 'pointer' : 'default',
+                              },
+                              pressed: {
+                                fill: countryData ? '#000000' : '#e0e0e0',
+                                stroke: '#ffffff',
+                                strokeWidth: 0.5,
+                                outline: 'none',
+                              },
+                            }}
+                          />
+                        )
+                      })
+                    }
+                  </Geographies>
+                </ZoomableGroup>
+              </ComposableMap>
+            </div>
+            <p className="font-poppins text-label-sm text-on-surface-variant mt-4 text-center">
+              {t('admin.languages.mapHint')}
+            </p>
+          </div>
+
+          {/* Country Detail Panel */}
+          {selectedCountry && (
+            <div className="w-full lg:w-96 flex-shrink-0 border border-outline-variant rounded-xl bg-surface-container-lowest overflow-hidden flex flex-col">
+              {/* Panel header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant bg-surface-container-low">
+                <div className="flex flex-col min-w-0">
+                  <span className="font-poppins text-body-md font-medium truncate">
+                    {selectedCountry.name}
+                  </span>
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                    {selectedCountry.area}
+                  </span>
+                </div>
+                <button
+                  onClick={closePanel}
+                  className="font-poppins text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer flex-shrink-0"
+                >
+                  <span className="material-symbols-outlined text-[20px]">close</span>
+                </button>
+              </div>
+
+              {/* Panel body */}
+              <div className="flex flex-col gap-5 p-6 flex-grow overflow-y-auto">
+                {error && (
+                  <p className="font-poppins text-label-sm text-error">{error}</p>
+                )}
+
+                {/* Language search for adding */}
+                <div className="flex flex-col gap-unit">
+                  <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                    {t('admin.languages.addLanguage')}
+                  </label>
+                  <input
+                    type="text"
+                    value={addSearch}
+                    onChange={e => setAddSearch(e.target.value)}
+                    placeholder={t('admin.languages.searchPlaceholder')}
+                    className="w-full bg-transparent border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
+                  />
+                  {addSearchResults.length > 0 && (
+                    <div className="border border-outline-variant rounded-xl overflow-hidden bg-surface-container-lowest max-h-48 overflow-y-auto">
+                      {addSearchResults.map(l => (
+                        <button
+                          key={l.id}
+                          onClick={() => handleAddLanguage(l)}
+                          className="w-full text-left px-4 py-2 hover:bg-surface-container transition-colors duration-300 cursor-pointer flex items-center justify-between"
+                        >
+                          <span className="font-poppins text-body-md text-on-surface">{l.name}</span>
+                          <span className="font-poppins text-label-sm text-on-surface-variant">{l.code}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Current languages */}
+                <div className="flex flex-col gap-unit">
+                  <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                    {t('admin.languages.languages')} ({countryLanguages.length})
+                  </label>
+                  {loadingPanel ? (
+                    <span className="font-poppins text-label-sm text-on-surface-variant">{t('common.loading')}</span>
+                  ) : countryLanguages.length === 0 ? (
+                    <p className="font-poppins text-body-md text-on-surface-variant">
+                      {t('admin.languages.noLanguages')}
+                    </p>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {countryLanguages.map(l => (
+                        <div
+                          key={l.id}
+                          className="flex items-center justify-between px-4 py-2 border border-outline-variant rounded-xl group"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-poppins text-body-md text-on-surface">{l.name}</span>
+                            <span className="font-poppins text-label-sm text-on-surface-variant">{l.code}</span>
+                          </div>
+                          <button
+                            onClick={() => handleRemoveLanguage(l.id)}
+                            className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+                          >
+                            {t('common.delete')}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mobile back button */}
+      {selectedCountry && (
+        <button
+          onClick={closePanel}
+          className="lg:hidden font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
+        >
+          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          {t('common.backToMap')}
+        </button>
       )}
     </div>
   )

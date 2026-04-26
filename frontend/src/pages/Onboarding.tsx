@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import { getProfile, updateProfile, listCountries, listLanguages, type Profile, type Country, type Language } from '../api/profile'
+import { getProfile, updateProfile, listCountries, listLanguages, type Country, type Language } from '../api/profile'
 import { listEducationLevels, type EducationLevel } from '../api/educationLevels'
 import { classifyLocation } from '../api/settlements'
 import Footer from '../components/Footer'
@@ -20,7 +20,6 @@ export default function Onboarding() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
-  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -54,7 +53,6 @@ export default function Onboarding() {
       ])
       if (profileRes.data) {
         const p = profileRes.data
-        setProfile(p)
         if (p.is_complete) { navigate('/dashboard', { replace: true }); return }
         setStep(p.current_step || 1)
         setDob(p.date_of_birth ?? '')
@@ -79,9 +77,7 @@ export default function Onboarding() {
     setSaving(true)
     setError('')
     const res = await updateProfile({ ...data, current_step: stepNum })
-    if (res.data) {
-      setProfile(res.data)
-    } else {
+    if (!res.data) {
       setError(res.error || 'Failed to save')
       setSaving(false)
       return false
