@@ -282,11 +282,7 @@
     "aboutThisRole": "About this role",
     "highMatch": "high match",
     "mediumMatch": "medium match",
-    "lowMatch": "low match",
-    "fullAIAnalysis": "Full AI Analysis",
-    "chooseThisPath": "Choose This Path",
-    "seeFullAnalysis": "See Full Analysis",
-    "hideAnalysis": "Hide Analysis"
+    "lowMatch": "low match"
   },
   "laborMarket": {
     "title": "Labor Market Insights",
@@ -301,6 +297,12 @@
     "hideCitation": "Hide Source",
     "insights": "Insights",
     "insufficientData": "Insufficient data available"
+  },
+  "automationRisk": {
+    "title": "Automation Risk",
+    "subtitle": "How vulnerable is your career path to automation?",
+    "yourSelection": "Your Selected Career",
+    "otherOptions": "Other Recommended Options"
   },
   "gender": {
     "male": "Male",

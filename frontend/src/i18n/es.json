@@ -293,6 +293,12 @@
     "insights": "Perspectivas",
     "insufficientData": "Datos insuficientes disponibles"
   },
+  "automationRisk": {
+    "title": "Riesgo de Automatización",
+    "subtitle": "¿Qué tan vulnerable es tu carrera a la automatización?",
+    "yourSelection": "Tu Carrera Seleccionada",
+    "otherOptions": "Otras Opciones Recomendadas"
+  },
   "gender": {
     "male": "Masculino",
     "female": "Femenino"

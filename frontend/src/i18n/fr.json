@@ -293,6 +293,12 @@
     "insights": "Aperçus",
     "insufficientData": "Données insuffisantes disponibles"
   },
+  "automationRisk": {
+    "title": "Risque d'Automatisation",
+    "subtitle": "Quelle est la vulnérabilité de votre carrière face à l'automatisation ?",
+    "yourSelection": "Votre Carrière Sélectionnée",
+    "otherOptions": "Autres Options Recommandées"
+  },
   "gender": {
     "male": "Homme",
     "female": "Femme"

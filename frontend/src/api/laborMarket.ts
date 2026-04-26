@@ -63,3 +63,34 @@ export function getLaborMarketSignals(iscoCode: string) {
     `/labor-market/signals?isco_code=${encodeURIComponent(iscoCode)}`
   )
 }
+
+// Automation risk types
+export interface AutomationRiskItem {
+  isco_code: string
+  title: string
+  risk_score: number | null
+  sd: number | null
+  gradient: string | null
+  risk_label: 'high' | 'medium' | 'low' | 'unknown'
+  analysis: string
+}
+
+export interface AutomationRiskResponse {
+  selected: AutomationRiskItem
+  all_occupations: AutomationRiskItem[]
+  summary: string
+}
+
+export interface AutomationRiskRequest {
+  selected_code: string
+  selected_title: string
+  recommendations: Array<{ isco_code: string; title: string }>
+}
+
+export function getAutomationRisk(data: AutomationRiskRequest) {
+  return apiClient.request<AutomationRiskResponse>('/labor-market/automation-risk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+}

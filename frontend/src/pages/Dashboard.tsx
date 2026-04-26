@@ -1,24 +1,22 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useState } from 'react'
+import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import Footer from '../components/Footer'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import LaborMarketSignals from '../components/LaborMarketSignals'
+import AutomationRiskModal from '../components/AutomationRiskModal'
 
 interface SelectedOccupation {
   isco_code: string
   title: string
+  all_recommendations?: Array<{ isco_code: string; title: string }>
 }
 
 export default function Dashboard() {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
-  const navigate = useNavigate()
   const isAdmin = user?.role === 'admin'
-  const [careerPathShown] = useState(() => {
-    return localStorage.getItem('career_path_shown') === 'true'
-  })
   const [selectedOccupation] = useState<SelectedOccupation | null>(() => {
     const stored = localStorage.getItem('selected_occupation')
     if (stored) {
@@ -31,20 +29,9 @@ export default function Dashboard() {
     return null
   })
   const [showSignals, setShowSignals] = useState(false)
-
-  useEffect(() => {
-    if (!careerPathShown) {
-      navigate('/career-assistant', { replace: true })
-    }
-  }, [careerPathShown, navigate])
-
-  if (!careerPathShown) {
-    return null
-  }
+  const [showAutomationRisk, setShowAutomationRisk] = useState(false)
 
   const handleLogout = () => {
-    localStorage.removeItem('career_path_shown')
-    localStorage.removeItem('selected_occupation')
     logout()
   }
 
@@ -115,25 +102,17 @@ export default function Dashboard() {
                   >
                     {t('laborMarket.insights')}
                   </button>
+                  <button
+                    onClick={() => setShowAutomationRisk(true)}
+                    className="border border-outline-variant text-on-surface-variant px-6 py-3 rounded font-poppins text-label-sm uppercase tracking-wider hover:border-primary hover:text-primary transition-colors duration-300 whitespace-nowrap"
+                  >
+                    {t('automationRisk.title')}
+                  </button>
                 </div>
               </div>
             )}
 
-            {/* No occupation selected */}
-            {!selectedOccupation && (
-              <div className="bg-surface-container p-6 rounded-xl">
-                <p className="font-poppins text-body-md text-on-surface-variant">
-                  {t('professionMatch.noMatches')}
-                </p>
-                <button
-                  onClick={() => navigate('/career-assistant')}
-                  className="mt-4 bg-primary text-on-primary px-6 py-3 rounded font-poppins text-label-sm uppercase tracking-wider hover:opacity-80 transition-opacity duration-300"
-                >
-                  {t('professionMatch.updateProfile')}
-                </button>
-              </div>
-            )}
-          </div>
+            </div>
         </main>
 
         <Footer />
@@ -144,6 +123,16 @@ export default function Dashboard() {
         <LaborMarketSignals
           iscoCode={selectedOccupation.isco_code}
           onClose={() => setShowSignals(false)}
+        />
+      )}
+
+      {/* Automation Risk Modal */}
+      {showAutomationRisk && selectedOccupation && (
+        <AutomationRiskModal
+          selectedCode={selectedOccupation.isco_code}
+          selectedTitle={selectedOccupation.title}
+          recommendations={selectedOccupation.all_recommendations || []}
+          onClose={() => setShowAutomationRisk(false)}
         />
       )}
     </>

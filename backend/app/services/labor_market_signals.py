@@ -267,3 +267,184 @@ Return ONLY valid JSON — no markdown, no text outside the JSON."""
 
     finally:
         db.close()
+
+
+def generate_automation_risk(
+    user_id: int,
+    selected_code: str,
+    selected_title: str,
+    recommendations: list[dict],
+) -> dict:
+    """Generate automation risk analysis for selected occupation and alternatives.
+
+    Args:
+        user_id: The authenticated user's ID.
+        selected_code: The user's chosen ISCO code.
+        selected_title: The user's chosen occupation title.
+        recommendations: List of { isco_code, title } for all other suggested occupations.
+
+    Returns:
+        Dict with selected risk, all occupations risks, and summary reasoning.
+    """
+    db = SessionLocal()
+    try:
+        # Get user profile
+        profile = db.execute(
+            select(UserProfile).where(UserProfile.user_id == user_id)
+        ).scalar_one_or_none()
+
+        if not profile:
+            raise ValueError("User profile not found")
+
+        # Build all codes to fetch
+        all_codes = [selected_code] + [r["isco_code"] for r in recommendations if r.get("isco_code")]
+
+        # Fetch automation exposure data
+        exposure_rows = db.execute(
+            select(AutomationExposure).where(
+                AutomationExposure.isco_code.in_(all_codes)
+            )
+        ).scalars().all()
+
+        # Build exposure lookup
+        exposure_map = {row.isco_code: {"mean": row.mean, "sd": row.sd, "gradient": row.gradient} for row in exposure_rows}
+
+        # Fetch user's work experiences for context
+        work_exps = db.execute(
+            select(WorkExperience).where(WorkExperience.profile_id == profile.id)
+        ).scalars().all()
+
+        work_summary = ""
+        if work_exps:
+            roles = [f"{w.job_title} at {w.company}" if w.company else w.job_title for w in work_exps if w.job_title]
+            work_summary = f"Work experience: {', '.join(roles)}"
+
+        # Build occupation data with risk scores
+        def build_occ_data(code: str, title: str) -> dict:
+            exp = exposure_map.get(code, {"mean": None, "sd": None, "gradient": None})
+            risk = exp["mean"]
+            # Determine risk level
+            if risk is None:
+                risk_label = "unknown"
+            elif risk > 0.5:
+                risk_label = "high"
+            elif risk > 0.3:
+                risk_label = "medium"
+            else:
+                risk_label = "low"
+            return {
+                "isco_code": code,
+                "title": title,
+                "risk_score": risk,
+                "sd": exp["sd"],
+                "gradient": exp["gradient"],
+                "risk_label": risk_label,
+            }
+
+        selected_data = build_occ_data(selected_code, selected_title)
+        other_occs = [build_occ_data(r["isco_code"], r["title"]) for r in recommendations if r.get("isco_code") != selected_code]
+
+        # Sort by risk_score descending (highest risk first for alternatives)
+        other_occs_sorted = sorted(other_occs, key=lambda x: (x["risk_score"] is None, -(x["risk_score"] or 0)))
+
+        # Build prompt for Minimax
+        occupation_table = ""
+        occupation_table += f"SELECTED (user's choice): {selected_code} — {selected_title} | Risk: {selected_data['risk_score']} | SD: {selected_data['sd']} | Gradient: {selected_data['gradient']}\n"
+        for i, occ in enumerate(other_occs_sorted, 1):
+            occupation_table += f"  {i}. {occ['isco_code']} — {occ['title']} | Risk: {occ['risk_score']} | SD: {occ['sd']} | Gradient: {occ['gradient']}\n"
+
+        prompt = f"""You are an AI analyzing automation risk for career paths.
+
+USER PROFILE:
+- Name: {profile.user.name if hasattr(profile, 'user') and profile.user else 'Unknown'}
+- Country: {profile.country or 'Not set'}
+- Education: {profile.education_level.name if profile.education_level else 'Not set'}
+- {"Languages: " + (', '.join([ul.language.name for ul in profile.languages]) if profile.languages else 'Not set')}
+{f"- {work_summary}" if work_summary else ""}
+{f"- Self-taught skills: {profile.self_taught_skills}" if profile.self_taught_skills else ""}
+{f"- Informal work: {profile.informal_work}" if profile.informal_work else ""}
+
+SELECTED OCCUPATION:
+{selected_code} — {selected_title}
+Automation risk score: {selected_data['risk_score']} (scale: 0 = no risk, 1 = maximum risk)
+Standard deviation: {selected_data['sd']}
+Risk trend gradient: {selected_data['gradient']}
+
+OTHER RECOMMENDED OCCUPATIONS:
+{occupation_table}
+
+INTERPRETATION GUIDE:
+- Risk > 0.5 = High automation risk (many tasks can be automated with current AI)
+- Risk 0.3–0.5 = Medium risk (some tasks vulnerable, human judgment still needed)
+- Risk < 0.3 = Low risk (requires human creativity, social intelligence, physical dexterity)
+
+Your task: For each occupation, provide analysis that:
+1. Explains what automation risk the occupation faces based on its score
+2. Identifies which specific tasks/aspects make it more or less automatable
+3. Compares the selected occupation's risk against alternatives
+4. Mentions what skills or traits would help humans in these roles remain relevant
+
+Return ONLY valid JSON (no markdown, no code blocks) in this exact format:
+
+{{
+  "selected": {{
+    "isco_code": "{selected_code}",
+    "title": "{selected_title}",
+    "risk_score": {selected_data['risk_score']},
+    "sd": {selected_data['sd']},
+    "gradient": "{selected_data['gradient'] or ''}",
+    "risk_label": "{selected_data['risk_label']}",
+    "analysis": "2-3 sentence analysis of this occupation's automation risk based on the score and user profile"
+  }},
+  "all_occupations": [
+    {{
+      "isco_code": "string",
+      "title": "string",
+      "risk_score": number,
+      "sd": number or null,
+      "gradient": "string or null",
+      "risk_label": "high|medium|low|unknown",
+      "analysis": "2-3 sentence analysis"
+    }}
+  ],
+  "summary": "Overall comparison: why the selected path is better/worse than alternatives from automation risk perspective, considering user's background."
+}}
+
+Return ONLY JSON."""
+
+        response = minimax_chat(
+            prompt=prompt,
+            system="You are an automation risk analyst. Return ONLY valid JSON, nothing else.",
+            temperature=0.4,
+            max_tokens=2048,
+        )
+
+        # Parse JSON response
+        try:
+            json_str = response.strip()
+            if json_str.startswith("```"):
+                json_str = json_str.split("```")[1]
+                if json_str.startswith("json"):
+                    json_str = json_str[4:]
+            result_data = json.loads(json_str)
+        except json.JSONDecodeError:
+            result_data = {
+                "selected": {
+                    "isco_code": selected_code,
+                    "title": selected_title,
+                    "risk_score": selected_data["risk_score"],
+                    "sd": selected_data["sd"],
+                    "gradient": selected_data["gradient"],
+                    "risk_label": selected_data["risk_label"],
+                    "analysis": "Analysis unavailable at this time.",
+                },
+                "all_occupations": [
+                    {**occ, "analysis": "Analysis unavailable at this time."} for occ in other_occs_sorted
+                ],
+                "summary": "Could not generate analysis due to a processing error.",
+            }
+
+        return result_data
+
+    finally:
+        db.close()

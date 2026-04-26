@@ -315,6 +315,10 @@ export default function ProfessionMatch() {
                         localStorage.setItem('selected_occupation', JSON.stringify({
                           isco_code: rec.isco_code,
                           title: rec.title,
+                          all_recommendations: recommendations.map(r => ({
+                            isco_code: r.isco_code,
+                            title: r.title,
+                          })),
                         }))
                         setSelectedCareer(rec)
                         setView('confirmation')

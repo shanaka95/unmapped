@@ -42,6 +42,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function restoreSession() {
+      // Clear career path flags on every app load so users always start fresh
+      localStorage.removeItem('career_path_shown')
+      localStorage.removeItem('selected_occupation')
+
       const result = await getMe()
       if (result.data) {
         setState({ user: result.data, isAuthenticated: true, isLoading: false })
