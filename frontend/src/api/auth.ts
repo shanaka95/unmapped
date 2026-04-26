@@ -55,6 +55,8 @@ export async function getMe() {
 export interface AdminStats {
   total_users: number
   verified_users: number
+  total_sectors: number
+  total_occupations: number
   admin: User
 }
 

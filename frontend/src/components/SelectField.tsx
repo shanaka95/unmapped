@@ -67,7 +67,7 @@ export default function SelectField({ label, id, options, placeholder, error, va
             error ? 'border-error' : open ? 'border-primary' : 'border-outline-variant'
           }`}
         >
-          <span className={selected ? 'text-on-surface' : 'text-outline'}>
+          <span className={`truncate min-w-0 ${selected ? 'text-on-surface' : 'text-outline'}`}>
             {selected ? selected.label : placeholder || 'Select...'}
           </span>
           <span className={`material-symbols-outlined text-on-surface-variant text-[20px] transition-transform duration-300 ${open ? 'rotate-180' : ''}`}>

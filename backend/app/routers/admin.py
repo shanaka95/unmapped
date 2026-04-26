@@ -3,6 +3,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_admin_user, get_db
+from app.models.occupation import Occupation
+from app.models.sector import Sector
 from app.models.user import User
 from app.schemas.auth import UserResponse
 
@@ -19,9 +21,14 @@ def get_admin_stats(
         select(func.count()).select_from(User).where(User.is_verified == True)
     ).scalar()
 
+    total_sectors = db.execute(select(func.count()).select_from(Sector)).scalar()
+    total_occupations = db.execute(select(func.count()).select_from(Occupation)).scalar()
+
     return {
         "total_users": total_users,
         "verified_users": verified_users,
+        "total_sectors": total_sectors,
+        "total_occupations": total_occupations,
         "admin": UserResponse.model_validate(_admin).model_dump(),
     }
 

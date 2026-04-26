@@ -122,7 +122,7 @@ function OverviewSection({ user }: { user: User | null }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
           <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
             Total Users
@@ -137,6 +137,22 @@ function OverviewSection({ user }: { user: User | null }) {
           </span>
           <span className="font-poppins text-h1 text-on-surface">
             {stats?.verified_users ?? 0}
+          </span>
+        </div>
+        <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
+          <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+            Sectors
+          </span>
+          <span className="font-poppins text-h1 text-on-surface">
+            {stats?.total_sectors ?? 0}
+          </span>
+        </div>
+        <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
+          <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+            Occupations
+          </span>
+          <span className="font-poppins text-h1 text-on-surface">
+            {stats?.total_occupations ?? 0}
           </span>
         </div>
       </div>
@@ -744,7 +760,8 @@ function OccupationsSection() {
           {(search || filterGroupId || filterLevel) && (
             <button
               onClick={() => { setSearch(''); setFilterGroupId(''); setFilterLevel(''); setPage(1) }}
-              className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
+              className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider pb-2 flex-shrink-0"
+              title="Clear all filters"
             >
               <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
               Clear
