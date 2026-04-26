@@ -49,3 +49,7 @@ coverage/
 
 # Misc
 *.local
+
+# SQLite databases
+*.db
+
