@@ -178,6 +178,24 @@
     "languages": "Langues",
     "languagesSubtitle": "Sélectionnez toutes les langues que vous parlez",
     "popular": "Populaires",
-    "searchLanguage": "Rechercher une langue..."
+    "searchLanguage": "Rechercher une langue...",
+    "workExperience": "Work Experience",
+    "workExperienceSubtitle": "Add your formal work experience, or skip if none",
+    "addExperience": "Add Experience",
+    "editExperience": "Edit Experience",
+    "jobTitlePlaceholder": "e.g. Software Developer",
+    "companyPlaceholder": "e.g. Acme Corp",
+    "industryPlaceholder": "e.g. Technology",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "currentJob": "I currently work here",
+    "current": "Current",
+    "noExperience": "No experience added yet",
+    "informalWork": "Informal Work",
+    "informalWorkSubtitle": "Any informal work, hobbies, or side gigs?",
+    "informalWorkPlaceholder": "e.g. Freelance web design, farming, repair work...",
+    "selfTaughtSkills": "Self-Taught Skills",
+    "selfTaughtSkillsSubtitle": "Anything you taught yourself that you are proud of",
+    "selfTaughtSkillsPlaceholder": "e.g. Self-taught programming from YouTube..."
   }
 }

@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint, func
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -19,6 +19,8 @@ class UserProfile(Base):
     longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     settlement_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
     education_level_id: Mapped[int | None] = mapped_column(ForeignKey("education_levels.id"), nullable=True)
+    informal_work: Mapped[str | None] = mapped_column(Text, nullable=True)
+    self_taught_skills: Mapped[str | None] = mapped_column(Text, nullable=True)
     current_step: Mapped[int] = mapped_column(Integer, default=1)
     is_complete: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime.datetime] = mapped_column(
@@ -31,6 +33,9 @@ class UserProfile(Base):
     education_level: Mapped["EducationLevel | None"] = relationship(lazy="joined")
     languages: Mapped[list["UserLanguage"]] = relationship(
         back_populates="profile", lazy="joined", cascade="all, delete-orphan"
+    )
+    work_experiences: Mapped[list["WorkExperience"]] = relationship(
+        back_populates="profile", lazy="select", cascade="all, delete-orphan"
     )
 
 

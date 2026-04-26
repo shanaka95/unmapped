@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { getProfile, updateProfile, listCountries, listLanguages, type Country, type Language } from '../api/profile'
 import { listEducationLevels, type EducationLevel } from '../api/educationLevels'
 import { classifyLocation } from '../api/settlements'
+import { listWorkExperiences, createWorkExperience, updateWorkExperience, deleteWorkExperience, type WorkExperience } from '../api/workExperiences'
 import Footer from '../components/Footer'
 
-const TOTAL_STEPS = 4
+const TOTAL_STEPS = 7
 
 const SETTLEMENT_TYPES = [
   { value: 'urban', label: 'Urban' },
@@ -15,6 +16,13 @@ const SETTLEMENT_TYPES = [
 ] as const
 
 const POPULAR_LANG_CODES = ['eng', 'spa', 'fra', 'deu', 'por', 'rus', 'ara', 'zho', 'hin', 'jpn']
+
+interface GeoSuggestion {
+  display_name: string
+  lat: string
+  lon: string
+  name?: string
+}
 
 export default function Onboarding() {
   const { t } = useTranslation()
@@ -27,6 +35,7 @@ export default function Onboarding() {
   // Form fields
   const [dob, setDob] = useState('')
   const [country, setCountry] = useState('')
+  const [countryName, setCountryName] = useState('')
   const [region, setRegion] = useState('')
   const [city, setCity] = useState('')
   const [latitude, setLatitude] = useState<number | null>(null)
@@ -34,6 +43,23 @@ export default function Onboarding() {
   const [settlementType, setSettlementType] = useState<string | null>(null)
   const [educationLevelId, setEducationLevelId] = useState<number | null>(null)
   const [selectedLangIds, setSelectedLangIds] = useState<number[]>([])
+
+  // Work experience
+  const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([])
+  const [showExpForm, setShowExpForm] = useState(false)
+  const [editingExpId, setEditingExpId] = useState<number | null>(null)
+  const [expJobTitle, setExpJobTitle] = useState('')
+  const [expCompany, setExpCompany] = useState('')
+  const [expIndustry, setExpIndustry] = useState('')
+  const [expStartDate, setExpStartDate] = useState('')
+  const [expEndDate, setExpEndDate] = useState('')
+  const [expIsCurrent, setExpIsCurrent] = useState(false)
+
+  // Informal work
+  const [informalWork, setInformalWork] = useState('')
+
+  // Self-taught skills
+  const [selfTaughtSkills, setSelfTaughtSkills] = useState('')
 
   // Reference data
   const [countries, setCountries] = useState<Country[]>([])
@@ -43,20 +69,32 @@ export default function Onboarding() {
   const [languageSearch, setLanguageSearch] = useState('')
   const [detectingLocation, setDetectingLocation] = useState(false)
 
+  // Geo search state
+  const [regionSuggestions, setRegionSuggestions] = useState<GeoSuggestion[]>([])
+  const [citySuggestions, setCitySuggestions] = useState<GeoSuggestion[]>([])
+  const [regionSearching, setRegionSearching] = useState(false)
+  const [citySearching, setCitySearching] = useState(false)
+  const [showRegionSuggestions, setShowRegionSuggestions] = useState(false)
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false)
+  const regionTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const cityTimerRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const [classifyingPlace, setClassifyingPlace] = useState(false)
+
   useEffect(() => {
     async function load() {
-      const [profileRes, countriesRes, langsRes, eduRes] = await Promise.all([
+      const [profileRes, countriesRes, langsRes, eduRes, expRes] = await Promise.all([
         getProfile(),
         listCountries(),
         listLanguages(),
         listEducationLevels(),
+        listWorkExperiences(),
       ])
       if (profileRes.data) {
         const p = profileRes.data
-        if (p.is_complete) { navigate('/dashboard', { replace: true }); return }
         setStep(p.current_step || 1)
         setDob(p.date_of_birth ?? '')
         setCountry(p.country ?? '')
+        setCountryName('') // derived below after countries load
         setRegion(p.region ?? '')
         setCity(p.city ?? '')
         setLatitude(p.latitude)
@@ -65,9 +103,17 @@ export default function Onboarding() {
         setEducationLevelId(p.education_level_id)
         setSelectedLangIds(p.language_ids ?? [])
       }
-      if (countriesRes.data) setCountries(countriesRes.data)
+      if (countriesRes.data) {
+        setCountries(countriesRes.data)
+        // Restore countryName from loaded countries if a country code is saved
+        if (country) {
+          const match = countriesRes.data.find(c => c.code === country)
+          if (match) setCountryName(match.name)
+        }
+      }
       if (langsRes.data) setLanguages(langsRes.data)
       if (eduRes.data) setEducationLevels(eduRes.data)
+      if (expRes.data) setWorkExperiences(expRes.data)
       setLoading(false)
     }
     load()
@@ -103,6 +149,15 @@ export default function Onboarding() {
     } else if (step === 3) {
       const ok = await saveStep(4, { education_level_id: educationLevelId })
       if (ok) setStep(4)
+    } else if (step === 4) {
+      // Work experience is optional — always proceed
+      setStep(5)
+    } else if (step === 5) {
+      const ok = await saveStep(6, { informal_work: informalWork || null })
+      if (ok) setStep(6)
+    } else if (step === 6) {
+      const ok = await saveStep(7, { self_taught_skills: selfTaughtSkills || null })
+      if (ok) setStep(7)
     }
   }
 
@@ -115,8 +170,10 @@ export default function Onboarding() {
     setError('')
     const res = await updateProfile({
       language_ids: selectedLangIds,
+      informal_work: informalWork || null,
+      self_taught_skills: selfTaughtSkills || null,
       is_complete: true,
-      current_step: 4,
+      current_step: 7,
     })
     if (res.data) {
       navigate('/dashboard', { replace: true })
@@ -175,6 +232,157 @@ export default function Onboarding() {
     )
   }
 
+  // Debounced Nominatim search for regions/admin areas within selected country
+  const searchRegion = useCallback((query: string) => {
+    if (regionTimerRef.current) clearTimeout(regionTimerRef.current)
+    if (!query.trim() || !countryName) { setRegionSuggestions([]); setShowRegionSuggestions(false); return }
+    regionTimerRef.current = setTimeout(async () => {
+      setRegionSearching(true)
+      try {
+        const params = new URLSearchParams({
+          q: query,
+          countrycodes: countryName.toLowerCase(),
+          format: 'json',
+          limit: '6',
+          addressdetails: '1',
+        })
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
+          headers: { 'Accept-Language': 'en' },
+        })
+        const data = await resp.json()
+        setRegionSuggestions(data.map((item: { display_name: string; lat: string; lon: string }) => ({
+          display_name: item.display_name,
+          lat: item.lat,
+          lon: item.lon,
+        })))
+        setShowRegionSuggestions(true)
+      } catch {
+        setRegionSuggestions([])
+      }
+      setRegionSearching(false)
+    }, 400)
+  }, [countryName])
+
+  // Debounced Nominatim search for cities within selected country
+  const searchCity = useCallback((query: string) => {
+    if (cityTimerRef.current) clearTimeout(cityTimerRef.current)
+    if (!query.trim() || !countryName) { setCitySuggestions([]); setShowCitySuggestions(false); return }
+    cityTimerRef.current = setTimeout(async () => {
+      setCitySearching(true)
+      try {
+        const params = new URLSearchParams({
+          q: query,
+          countrycodes: countryName.toLowerCase(),
+          format: 'json',
+          limit: '6',
+        })
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
+          headers: { 'Accept-Language': 'en' },
+        })
+        const data = await resp.json()
+        setCitySuggestions(data.map((item: { display_name: string; lat: string; lon: string }) => ({
+          display_name: item.display_name,
+          lat: item.lat,
+          lon: item.lon,
+        })))
+        setShowCitySuggestions(true)
+      } catch {
+        setCitySuggestions([])
+      }
+      setCitySearching(false)
+    }, 400)
+  }, [countryName])
+
+  // Classify settlement type from coordinates
+  async function classifySettlementFromCoords(lat: number, lng: number) {
+    setClassifyingPlace(true)
+    try {
+      const classifyRes = await classifyLocation(lat, lng)
+      if (classifyRes.data) {
+        setSettlementType(classifyRes.data.settlement_type)
+      }
+    } catch {
+      // Could not classify — user can pick manually
+    }
+    setClassifyingPlace(false)
+  }
+
+  // Pick a region suggestion and auto-classify
+  function pickRegion(suggestion: GeoSuggestion) {
+    setRegion(suggestion.display_name)
+    setShowRegionSuggestions(false)
+    setRegionSuggestions([])
+    classifySettlementFromCoords(parseFloat(suggestion.lat), parseFloat(suggestion.lon))
+  }
+
+  // Pick a city suggestion and auto-classify
+  function pickCity(suggestion: GeoSuggestion) {
+    setCity(suggestion.display_name)
+    setShowCitySuggestions(false)
+    setCitySuggestions([])
+    classifySettlementFromCoords(parseFloat(suggestion.lat), parseFloat(suggestion.lon))
+  }
+
+  // Work experience helpers
+  function resetExpForm() {
+    setShowExpForm(false)
+    setEditingExpId(null)
+    setExpJobTitle('')
+    setExpCompany('')
+    setExpIndustry('')
+    setExpStartDate('')
+    setExpEndDate('')
+    setExpIsCurrent(false)
+  }
+
+  function startAddExperience() {
+    resetExpForm()
+    setShowExpForm(true)
+  }
+
+  function startEditExperience(exp: WorkExperience) {
+    setEditingExpId(exp.id)
+    setExpJobTitle(exp.job_title || '')
+    setExpCompany(exp.company || '')
+    setExpIndustry(exp.industry || '')
+    setExpStartDate(exp.start_date || '')
+    setExpEndDate(exp.end_date || '')
+    setExpIsCurrent(exp.is_current)
+    setShowExpForm(true)
+  }
+
+  async function handleSaveExperience() {
+    if (!expJobTitle.trim()) return
+    const payload = {
+      job_title: expJobTitle || null,
+      company: expCompany || null,
+      industry: expIndustry || null,
+      start_date: expStartDate || null,
+      end_date: expIsCurrent ? null : (expEndDate || null),
+      is_current: expIsCurrent,
+    }
+    if (editingExpId) {
+      const res = await updateWorkExperience(editingExpId, payload)
+      if (res.data) {
+        const refreshed = await listWorkExperiences()
+        if (refreshed.data) setWorkExperiences(refreshed.data)
+      }
+    } else {
+      const res = await createWorkExperience(payload)
+      if (res.data) {
+        const refreshed = await listWorkExperiences()
+        if (refreshed.data) setWorkExperiences(refreshed.data)
+      }
+    }
+    resetExpForm()
+  }
+
+  async function handleDeleteExperience(id: number) {
+    await deleteWorkExperience(id)
+    const refreshed = await listWorkExperiences()
+    if (refreshed.data) setWorkExperiences(refreshed.data)
+  }
+
   if (loading) {
     return (
       <div className="bg-background text-on-surface antialiased min-h-screen flex flex-col font-poppins text-body-md">
@@ -205,7 +413,13 @@ export default function Onboarding() {
       ? !!settlementType
       : step === 3
         ? !!educationLevelId
-        : selectedLangIds.length > 0
+        : step === 4
+          ? true // work experience is optional
+          : step === 5
+            ? true // informal work is optional
+            : step === 6
+              ? true // self-taught skills is optional
+              : selectedLangIds.length > 0
 
   return (
     <div className="bg-background text-on-surface antialiased min-h-screen flex flex-col font-poppins text-body-md">
@@ -311,7 +525,7 @@ export default function Onboarding() {
                     {filteredCountries.slice(0, 20).map(c => (
                       <button
                         key={c.id}
-                        onClick={() => { setCountry(c.code); setCountrySearch('') }}
+                        onClick={() => { setCountry(c.code); setCountryName(c.name); setCountrySearch('') }}
                         className="w-full text-left px-4 py-2 hover:bg-surface-container transition-colors duration-200 cursor-pointer font-poppins text-body-sm"
                       >
                         {c.name}
@@ -327,31 +541,77 @@ export default function Onboarding() {
               </div>
 
               {/* Region */}
-              <div className="flex flex-col gap-unit">
+              <div className="flex flex-col gap-unit relative">
                 <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
                   {t('onboarding.region')}
                 </label>
                 <input
                   type="text"
                   value={region}
-                  onChange={e => setRegion(e.target.value)}
+                  onChange={e => { setRegion(e.target.value); searchRegion(e.target.value) }}
+                  onFocus={() => { if (region.trim() && countryName) searchRegion(region) }}
                   placeholder={t('onboarding.regionPlaceholder')}
                   className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
                 />
+                {classifyingPlace && (
+                  <span className="font-poppins text-label-sm text-primary flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
+                    Detecting settlement type...
+                  </span>
+                )}
+                {showRegionSuggestions && regionSuggestions.length > 0 && (
+                  <div className="border border-outline-variant rounded-xl max-h-48 overflow-y-auto mt-1 bg-surface shadow-lg z-10">
+                    {regionSuggestions.map((s, i) => (
+                      <button
+                        key={s.lat + s.lon + i}
+                        onClick={() => pickRegion(s)}
+                        className="w-full text-left px-4 py-2 hover:bg-surface-container transition-colors duration-200 cursor-pointer font-poppins text-body-sm text-on-surface"
+                      >
+                        {s.display_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {regionSearching && (
+                  <span className="font-poppins text-label-sm text-on-surface-variant flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
+                    Searching...
+                  </span>
+                )}
               </div>
 
               {/* City */}
-              <div className="flex flex-col gap-unit">
+              <div className="flex flex-col gap-unit relative">
                 <label className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
                   {t('onboarding.city')}
                 </label>
                 <input
                   type="text"
                   value={city}
-                  onChange={e => setCity(e.target.value)}
+                  onChange={e => { setCity(e.target.value); searchCity(e.target.value) }}
+                  onFocus={() => { if (city.trim() && countryName) searchCity(city) }}
                   placeholder={t('onboarding.cityPlaceholder')}
                   className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
                 />
+                {showCitySuggestions && citySuggestions.length > 0 && (
+                  <div className="border border-outline-variant rounded-xl max-h-48 overflow-y-auto mt-1 bg-surface shadow-lg z-10">
+                    {citySuggestions.map((s, i) => (
+                      <button
+                        key={s.lat + s.lon + i}
+                        onClick={() => pickCity(s)}
+                        className="w-full text-left px-4 py-2 hover:bg-surface-container transition-colors duration-200 cursor-pointer font-poppins text-body-sm text-on-surface"
+                      >
+                        {s.display_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {citySearching && (
+                  <span className="font-poppins text-label-sm text-on-surface-variant flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
+                    Searching...
+                  </span>
+                )}
               </div>
 
               {/* Settlement type pills */}
@@ -423,8 +683,208 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 4: Languages */}
+          {/* Step 4: Work Experience */}
           {step === 4 && (
+            <div className="flex flex-col gap-6">
+              <div className="text-center">
+                <h1 className="font-poppins text-h1 text-on-surface">
+                  {t('onboarding.workExperience')}
+                </h1>
+                <p className="font-poppins text-body-md text-on-surface-variant mt-2">
+                  {t('onboarding.workExperienceSubtitle')}
+                </p>
+              </div>
+
+              {/* Existing experiences */}
+              {workExperiences.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  {workExperiences.map(exp => (
+                    <div
+                      key={exp.id}
+                      className="p-4 rounded-xl border border-outline-variant flex items-start justify-between gap-3"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <span className="font-poppins text-body-md text-on-surface block">
+                          {exp.job_title}
+                        </span>
+                        {exp.company && (
+                          <span className="font-poppins text-label-sm text-on-surface-variant block">
+                            {exp.company}
+                          </span>
+                        )}
+                        {exp.industry && (
+                          <span className="font-poppins text-label-sm text-on-surface-variant/70 block">
+                            {exp.industry}
+                          </span>
+                        )}
+                        <span className="font-poppins text-label-sm text-on-surface-variant/70 block mt-1">
+                          {exp.start_date || '—'}
+                          {' → '}
+                          {exp.is_current ? t('onboarding.current') : (exp.end_date || '—')}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <button
+                          onClick={() => startEditExperience(exp)}
+                          className="p-1.5 rounded-full hover:bg-surface-container transition-colors cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-[18px] text-on-surface-variant">edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteExperience(exp.id)}
+                          className="p-1.5 rounded-full hover:bg-error-container transition-colors cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-[18px] text-error">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add / edit form */}
+              {showExpForm ? (
+                <div className="flex flex-col gap-3 p-4 rounded-xl border border-primary bg-primary/5">
+                  <span className="font-poppins text-label-sm text-primary uppercase tracking-wider">
+                    {editingExpId ? t('onboarding.editExperience') : t('onboarding.addExperience')}
+                  </span>
+                  <input
+                    type="text"
+                    value={expJobTitle}
+                    onChange={e => setExpJobTitle(e.target.value)}
+                    placeholder={t('onboarding.jobTitlePlaceholder')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
+                  />
+                  <input
+                    type="text"
+                    value={expCompany}
+                    onChange={e => setExpCompany(e.target.value)}
+                    placeholder={t('onboarding.companyPlaceholder')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
+                  />
+                  <input
+                    type="text"
+                    value={expIndustry}
+                    onChange={e => setExpIndustry(e.target.value)}
+                    placeholder={t('onboarding.industryPlaceholder')}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline"
+                  />
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <label className="font-poppins text-label-sm text-on-surface-variant block mb-1">
+                        {t('onboarding.startDate')}
+                      </label>
+                      <input
+                        type="date"
+                        value={expStartDate}
+                        onChange={e => setExpStartDate(e.target.value)}
+                        className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="font-poppins text-label-sm text-on-surface-variant block mb-1">
+                        {t('onboarding.endDate')}
+                      </label>
+                      <input
+                        type="date"
+                        value={expEndDate}
+                        onChange={e => setExpEndDate(e.target.value)}
+                        disabled={expIsCurrent}
+                        className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={expIsCurrent}
+                      onChange={e => { setExpIsCurrent(e.target.checked); if (e.target.checked) setExpEndDate('') }}
+                      className="accent-primary"
+                    />
+                    <span className="font-poppins text-label-sm text-on-surface-variant">{t('onboarding.currentJob')}</span>
+                  </label>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={handleSaveExperience}
+                      disabled={!expJobTitle.trim()}
+                      className="flex-1 bg-primary text-on-primary py-3 rounded-default text-label-sm uppercase tracking-wider hover:opacity-80 transition-opacity cursor-pointer disabled:opacity-50"
+                    >
+                      {t('common.saving')}
+                    </button>
+                    <button
+                      onClick={resetExpForm}
+                      className="px-6 border border-outline-variant py-3 rounded-default text-label-sm uppercase tracking-wider text-on-surface-variant hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                    >
+                      {t('common.cancel')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={startAddExperience}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 border border-outline-variant rounded-xl font-poppins text-label-sm uppercase tracking-wider text-on-surface-variant hover:border-primary hover:text-primary transition-colors duration-300 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add</span>
+                  {t('onboarding.addExperience')}
+                </button>
+              )}
+
+              {workExperiences.length === 0 && !showExpForm && (
+                <span className="font-poppins text-label-sm text-on-surface-variant/60 text-center">
+                  {t('onboarding.noExperience')}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Step 5: Informal Work */}
+          {step === 5 && (
+            <div className="flex flex-col gap-6">
+              <div className="text-center">
+                <h1 className="font-poppins text-h1 text-on-surface">
+                  {t('onboarding.informalWork')}
+                </h1>
+                <p className="font-poppins text-body-md text-on-surface-variant mt-2">
+                  {t('onboarding.informalWorkSubtitle')}
+                </p>
+              </div>
+              <div className="flex flex-col gap-unit">
+                <textarea
+                  value={informalWork}
+                  onChange={e => setInformalWork(e.target.value)}
+                  placeholder={t('onboarding.informalWorkPlaceholder')}
+                  rows={5}
+                  className="w-full bg-transparent border border-outline-variant rounded-xl px-4 py-3 text-on-surface text-body-md focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Self-Taught Skills */}
+          {step === 6 && (
+            <div className="flex flex-col gap-6">
+              <div className="text-center">
+                <h1 className="font-poppins text-h1 text-on-surface">
+                  {t('onboarding.selfTaughtSkills')}
+                </h1>
+                <p className="font-poppins text-body-md text-on-surface-variant mt-2">
+                  {t('onboarding.selfTaughtSkillsSubtitle')}
+                </p>
+              </div>
+              <div className="flex flex-col gap-unit">
+                <textarea
+                  value={selfTaughtSkills}
+                  onChange={e => setSelfTaughtSkills(e.target.value)}
+                  placeholder={t('onboarding.selfTaughtSkillsPlaceholder')}
+                  rows={5}
+                  className="w-full bg-transparent border border-outline-variant rounded-xl px-4 py-3 text-on-surface text-body-md focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Step 7: Languages */}
+          {step === 7 && (
             <div className="flex flex-col gap-6">
               <div className="text-center">
                 <h1 className="font-poppins text-h1 text-on-surface">

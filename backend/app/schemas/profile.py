@@ -15,6 +15,8 @@ class ProfileResponse(BaseModel):
     settlement_type: str | None = None
     education_level_id: int | None = None
     education_level_name: str | None = None
+    informal_work: str | None = None
+    self_taught_skills: str | None = None
     language_ids: list[int] = []
     current_step: int = 1
     is_complete: bool = False
@@ -31,6 +33,8 @@ class ProfileUpdate(BaseModel):
     settlement_type: str | None = None
     education_level_id: int | None = None
     language_ids: list[int] | None = None
+    informal_work: str | None = None
+    self_taught_skills: str | None = None
     current_step: int | None = None
     is_complete: bool | None = None
 
@@ -45,3 +49,23 @@ class LanguageResponse(BaseModel):
     id: int
     code: str
     name: str
+
+
+class WorkExperienceCreate(BaseModel):
+    job_title: str | None = None
+    company: str | None = None
+    industry: str | None = None
+    start_date: datetime.date | None = None
+    end_date: datetime.date | None = None
+    is_current: bool = False
+
+
+class WorkExperienceResponse(BaseModel):
+    id: int
+    profile_id: int
+    job_title: str | None = None
+    company: str | None = None
+    industry: str | None = None
+    start_date: datetime.date | None = None
+    end_date: datetime.date | None = None
+    is_current: bool = False

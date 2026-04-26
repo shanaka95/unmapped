@@ -13,6 +13,8 @@ export interface Profile {
   education_level_id: number | null
   education_level_name: string | null
   language_ids: number[]
+  informal_work: string | null
+  self_taught_skills: string | null
   current_step: number
   is_complete: boolean
   completion_pct: number
@@ -44,6 +46,8 @@ export function updateProfile(data: Partial<{
   settlement_type: string | null
   education_level_id: number | null
   language_ids: number[]
+  informal_work: string | null
+  self_taught_skills: string | null
   current_step: number
   is_complete: boolean
 }>) {
