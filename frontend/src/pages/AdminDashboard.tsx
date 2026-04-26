@@ -10,6 +10,10 @@ import {
   listOccupations, createOccupation, updateOccupation, deleteOccupation, listOccupationGroups,
   type Occupation, type OccupationGroup,
 } from '../api/occupations'
+import {
+  listIscedLevels, listEducationLevels, createEducationLevel,
+  deleteEducationLevel, type IscedLevel, type EducationLevel as EducationLevelType,
+} from '../api/educationLevels'
 import InputField from '../components/InputField'
 import Pagination from '../components/Pagination'
 import SearchBar from '../components/SearchBar'
@@ -17,12 +21,13 @@ import SelectField from '../components/SelectField'
 import Footer from '../components/Footer'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 
-type Section = 'overview' | 'sectors' | 'occupations'
+type Section = 'overview' | 'sectors' | 'occupations' | 'education'
 
 const SECTION_KEYS: Record<Section, string> = {
   overview: 'admin.overview',
   sectors: 'admin.sectors',
   occupations: 'admin.occupations',
+  education: 'admin.education',
 }
 
 export default function AdminDashboard() {
@@ -53,7 +58,7 @@ export default function AdminDashboard() {
       <div className="flex flex-grow">
         {/* Left sidebar */}
         <nav className="hidden sm:flex flex-col w-56 border-r border-outline-variant px-4 py-6 gap-unit flex-shrink-0">
-          {(['overview', 'sectors', 'occupations'] as const).map(s => (
+          {(['overview', 'sectors', 'occupations', 'education'] as const).map(s => (
             <button
               key={s}
               onClick={() => setSection(s)}
@@ -70,7 +75,7 @@ export default function AdminDashboard() {
 
         {/* Mobile nav */}
         <div className="sm:hidden flex border-b border-outline-variant w-full">
-          {(['overview', 'sectors', 'occupations'] as const).map(s => (
+          {(['overview', 'sectors', 'occupations', 'education'] as const).map(s => (
             <button
               key={s}
               onClick={() => setSection(s)}
@@ -91,6 +96,7 @@ export default function AdminDashboard() {
             {section === 'overview' && <OverviewSection user={user} />}
             {section === 'sectors' && <SectorsSection />}
             {section === 'occupations' && <OccupationsSection />}
+            {section === 'education' && <EducationSection />}
           </div>
         </main>
       </div>
@@ -996,6 +1002,235 @@ function OccupationsSection() {
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
           {t('common.backToList')}
         </button>
+      )}
+    </div>
+  )
+}
+
+function EducationSection() {
+  const { t } = useTranslation()
+  const [levels, setLevels] = useState<EducationLevelType[]>([])
+  const [iscedLevels, setIscedLevels] = useState<IscedLevel[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+
+  // Form state
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [iscedLevelId, setIscedLevelId] = useState('')
+
+  async function loadData() {
+    const [levelsRes, iscedRes] = await Promise.all([listEducationLevels(), listIscedLevels()])
+    if (levelsRes.data) setLevels(levelsRes.data)
+    if (iscedRes.data) setIscedLevels(iscedRes.data)
+    setLoading(false)
+  }
+
+  useEffect(() => { loadData() }, [])
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setFormError('')
+
+    if (!name.trim()) { setFormError('Name is required'); return }
+    if (!iscedLevelId) { setFormError('Please select an ISCED level'); return }
+
+    setIsSubmitting(true)
+    const result = await createEducationLevel({
+      name: name.trim(),
+      description: description.trim() || null,
+      isced_level_id: parseInt(iscedLevelId),
+    })
+
+    if (result.data) {
+      setName('')
+      setDescription('')
+      setIscedLevelId('')
+      setShowForm(false)
+      await loadData()
+    } else {
+      setFormError(result.error || 'Failed to create education level')
+    }
+    setIsSubmitting(false)
+  }
+
+  async function handleDelete(id: number) {
+    const result = await deleteEducationLevel(id)
+    if (result.status === 204 || result.data !== undefined) {
+      await loadData()
+    }
+  }
+
+  const iscedOptions = iscedLevels.map(l => ({
+    value: String(l.id),
+    label: `Level ${l.level} — ${l.name}`,
+  }))
+
+  const q = search.toLowerCase()
+  const filtered = q
+    ? levels.filter(l =>
+        l.name.toLowerCase().includes(q) ||
+        (l.description && l.description.toLowerCase().includes(q)) ||
+        l.isced_level.name.toLowerCase().includes(q)
+      )
+    : levels
+
+  const PER_PAGE = 20
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const paged = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE)
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center justify-between">
+        <h2 className="font-poppins text-h1 text-on-surface">{t('admin.education')}</h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
+        >
+          <span className="material-symbols-outlined text-[18px]">{showForm ? 'close' : 'add'}</span>
+          {showForm ? 'Cancel' : 'Add Level'}
+        </button>
+      </div>
+
+      {/* Add form */}
+      {showForm && (
+        <form
+          onSubmit={handleSubmit}
+          className="border border-outline-variant rounded-xl p-6 flex flex-col gap-6 bg-surface-container-lowest"
+        >
+          {formError && (
+            <p className="font-poppins text-label-sm text-error">{formError}</p>
+          )}
+          <InputField
+            label="Name"
+            id="edu-name"
+            placeholder="e.g. Bachelor of Science"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+          />
+          <div className="flex flex-col gap-unit">
+            <label
+              className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+              htmlFor="edu-description"
+            >
+              Description
+            </label>
+            <textarea
+              id="edu-description"
+              placeholder={'A human-friendly description, e.g. "I have completed my bachelor\'s degree at a university"...'}
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              rows={3}
+              className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+            />
+          </div>
+          <SelectField
+            label="ISCED Level"
+            id="edu-isced"
+            options={iscedOptions}
+            placeholder="Select ISCED level"
+            value={iscedLevelId}
+            onChange={setIscedLevelId}
+          />
+          {iscedLevelId && (
+            <div className="flex items-center gap-unit">
+              <span className="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+              <span className="font-poppins text-label-sm text-primary">
+                {iscedLevels.find(l => String(l.id) === iscedLevelId)?.name}
+              </span>
+            </div>
+          )}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="self-start font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
+          >
+            {isSubmitting ? 'Creating...' : 'Create Level'}
+          </button>
+        </form>
+      )}
+
+      {/* Search */}
+      {!loading && (
+        <SearchBar
+          id="edu-search"
+          value={search}
+          onChange={v => { setSearch(v); setPage(1) }}
+          placeholder="Search education levels..."
+        />
+      )}
+
+      {/* Table */}
+      {loading ? (
+        <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+          {t('common.loading')}
+        </span>
+      ) : filtered.length === 0 ? (
+        <div className="border border-outline-variant rounded-xl p-12 text-center">
+          <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">school</span>
+          <p className="font-poppins text-body-md text-on-surface-variant">
+            {levels.length === 0 ? 'No education levels yet. Add one above.' : 'No education levels match your search.'}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-outline-variant bg-surface-container-low">
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                    Name
+                  </th>
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                    Description
+                  </th>
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                    ISCED Level
+                  </th>
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paged.map(l => (
+                  <tr key={l.id} className="border-b border-outline-variant last:border-b-0 hover:bg-surface-container-low transition-colors duration-300 group">
+                    <td className="px-6 py-4 font-medium">{l.name}</td>
+                    <td className="px-6 py-4 text-on-surface-variant max-w-xs truncate">
+                      {l.description || '—'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="font-poppins text-label-sm bg-surface-container text-on-surface-variant px-3 py-1 rounded-default">
+                        L{l.isced_level.level}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => handleDelete(l.id)}
+                        className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {filtered.length > PER_PAGE && (
+            <Pagination
+              total={filtered.length}
+              page={safePage}
+              perPage={PER_PAGE}
+              onPageChange={setPage}
+            />
+          )}
+        </>
       )}
     </div>
   )

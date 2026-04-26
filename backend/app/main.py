@@ -9,6 +9,8 @@ from app.routers.ilo_sector import router as ilo_sector_router
 from app.routers.sector import router as sector_router
 from app.routers.occupation import router as occupation_router
 from app.routers.occupation_group import router as occupation_group_router
+from app.routers.isced_level import router as isced_level_router
+from app.routers.education_level import router as education_level_router
 
 
 def create_app() -> FastAPI:
@@ -33,6 +35,8 @@ def create_app() -> FastAPI:
     app.include_router(sector_router)
     app.include_router(occupation_router)
     app.include_router(occupation_group_router)
+    app.include_router(isced_level_router)
+    app.include_router(education_level_router)
 
     return app
 
