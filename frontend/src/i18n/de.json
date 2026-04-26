@@ -278,5 +278,23 @@
     "highMatch": "hohe Übereinstimmung",
     "mediumMatch": "mittlere Übereinstimmung",
     "lowMatch": "geringe Übereinstimmung"
+  },
+  "laborMarket": {
+    "title": "Arbeitsmarkt-Einblicke",
+    "employmentOutlook": "Beschäftigungsausblick",
+    "genderGap": "Geschlechtergefälle",
+    "regionalComparison": "Regionaler Vergleich",
+    "migrationRecommendation": "Migrationsempfehlung",
+    "underemployment": "Unterbeschäftigung",
+    "workingTime": "Durchschnittliche Arbeitszeit",
+    "hoursPerWeek": "Stunden/Woche",
+    "viewCitation": "Quelle anzeigen",
+    "hideCitation": "Quelle ausblenden",
+    "insights": "Einblicke",
+    "insufficientData": "Unzureichende Daten verfügbar"
+  },
+  "gender": {
+    "male": "Männlich",
+    "female": "Weiblich"
   }
 }

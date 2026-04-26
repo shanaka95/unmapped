@@ -5,6 +5,7 @@ import AuthLayout from '../components/AuthLayout'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
 import { login as apiLogin } from '../api/auth'
+import { getProfile } from '../api/profile'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
@@ -25,7 +26,16 @@ export default function Login() {
 
     if (result.data) {
       login(result.data.user, result.data.access_token)
-      navigate(result.data.user.role === 'admin' ? '/admin' : '/dashboard')
+
+      // Check if onboarding is complete
+      const profileRes = await getProfile()
+      const destination = result.data.user.role === 'admin'
+        ? '/admin'
+        : profileRes.data?.is_complete
+          ? '/career-assistant'
+          : '/onboarding'
+
+      navigate(destination)
     } else {
       setError(result.error || t('api.loginFailed'))
     }

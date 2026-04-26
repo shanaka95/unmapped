@@ -287,5 +287,23 @@
     "chooseThisPath": "Choose This Path",
     "seeFullAnalysis": "See Full Analysis",
     "hideAnalysis": "Hide Analysis"
+  },
+  "laborMarket": {
+    "title": "Labor Market Insights",
+    "employmentOutlook": "Employment Outlook",
+    "genderGap": "Gender Gap",
+    "regionalComparison": "Regional Comparison",
+    "migrationRecommendation": "Migration Recommendation",
+    "underemployment": "Underemployment",
+    "workingTime": "Average Working Time",
+    "hoursPerWeek": "hours/week",
+    "viewCitation": "View Source",
+    "hideCitation": "Hide Source",
+    "insights": "Insights",
+    "insufficientData": "Insufficient data available"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female"
   }
 }

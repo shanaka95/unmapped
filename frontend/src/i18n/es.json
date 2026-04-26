@@ -278,5 +278,23 @@
     "highMatch": "alta coincidencia",
     "mediumMatch": "coincidencia media",
     "lowMatch": "baja coincidencia"
+  },
+  "laborMarket": {
+    "title": "Perspectivas del mercado laboral",
+    "employmentOutlook": "Perspectivas de empleo",
+    "genderGap": "Brecha de género",
+    "regionalComparison": "Comparación regional",
+    "migrationRecommendation": "Recomendación de migración",
+    "underemployment": "Subempleo",
+    "workingTime": "Tiempo de trabajo promedio",
+    "hoursPerWeek": "horas/semana",
+    "viewCitation": "Ver fuente",
+    "hideCitation": "Ocultar fuente",
+    "insights": "Perspectivas",
+    "insufficientData": "Datos insuficientes disponibles"
+  },
+  "gender": {
+    "male": "Masculino",
+    "female": "Femenino"
   }
 }

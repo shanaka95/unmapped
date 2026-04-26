@@ -234,7 +234,7 @@ export default function ProfessionMatch() {
           </div>
 
           {/* Career cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start" style={{ minHeight: '490px' }}>
             {recommendations.map((rec) => {
               const s = rankStyles[rec.rank] || rankStyles[3]
               const isExpanded = expandedRank === rec.rank
@@ -243,7 +243,7 @@ export default function ProfessionMatch() {
               return (
                 <div
                   key={rec.rank}
-                  className={`border rounded-xl overflow-hidden transition-all duration-300 flex flex-col ${
+                  className={`border rounded-xl overflow-hidden transition-all duration-300 flex flex-col min-h-[490px] ${
                     isExpanded ? `${s.border} shadow-lg` : 'border-outline-variant'
                   }`}
                 >
@@ -311,7 +311,14 @@ export default function ProfessionMatch() {
                       {isExpanded ? t('professionMatch.hideAnalysis') : t('professionMatch.seeFullAnalysis')}
                     </button>
                     <button
-                      onClick={() => { setSelectedCareer(rec); setView('confirmation') }}
+                      onClick={() => {
+                        localStorage.setItem('selected_occupation', JSON.stringify({
+                          isco_code: rec.isco_code,
+                          title: rec.title,
+                        }))
+                        setSelectedCareer(rec)
+                        setView('confirmation')
+                      }}
                       className="font-poppins text-label-sm bg-primary text-on-primary px-4 py-4 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer text-center"
                     >
                       {t('professionMatch.chooseThisPath')}
@@ -339,16 +346,7 @@ export default function ProfessionMatch() {
             })}
           </div>
 
-          {/* CTA */}
-          <div className="flex justify-center pt-4">
-            <button
-              onClick={() => { localStorage.setItem('career_path_shown', 'true'); navigate('/dashboard') }}
-              className="font-poppins text-label-sm border border-outline-variant px-8 py-4 rounded-default uppercase tracking-wider hover:border-primary hover:text-primary transition-colors duration-300 cursor-pointer"
-            >
-              {t('professionMatch.skipToDashboard')}
-            </button>
           </div>
-        </div>
       </main>
       <Footer />
     </div>

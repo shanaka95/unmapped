@@ -16,6 +16,7 @@ from app.routers.profile import router as profile_router
 from app.routers.sector import router as sector_router
 from app.routers.settlement import router as settlement_router
 from app.routers.career_match import router as career_match_router
+from app.routers.labor_market import router as labor_market_router
 
 
 def create_app() -> FastAPI:
@@ -47,6 +48,7 @@ def create_app() -> FastAPI:
     app.include_router(sector_router)
     app.include_router(settlement_router)
     app.include_router(career_match_router)
+    app.include_router(labor_market_router)
 
     return app
 

@@ -278,5 +278,23 @@
     "highMatch": "forte correspondance",
     "mediumMatch": "correspondance moyenne",
     "lowMatch": "faible correspondance"
+  },
+  "laborMarket": {
+    "title": "Aperçu du marché du travail",
+    "employmentOutlook": "Perspectives d'emploi",
+    "genderGap": "Écart entre les sexes",
+    "regionalComparison": "Comparaison régionale",
+    "migrationRecommendation": "Recommandation de migration",
+    "underemployment": "Sous-emploi",
+    "workingTime": "Temps de travail moyen",
+    "hoursPerWeek": "heures/semaine",
+    "viewCitation": "Voir la source",
+    "hideCitation": "Masquer la source",
+    "insights": "Aperçus",
+    "insufficientData": "Données insuffisantes disponibles"
+  },
+  "gender": {
+    "male": "Homme",
+    "female": "Femme"
   }
 }
