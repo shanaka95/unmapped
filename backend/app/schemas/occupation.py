@@ -8,6 +8,10 @@ class OccupationCreate(BaseModel):
     code: str | None = None
     title: str
     definition: str | None = None
+    tasks_include: str | None = None
+    included_occupations: str | None = None
+    excluded_occupations: str | None = None
+    notes: str | None = None
     group_id: int
 
     @field_validator("code")
@@ -43,6 +47,10 @@ class OccupationUpdate(BaseModel):
     level: int | None = None
     title: str | None = None
     definition: str | None = None
+    tasks_include: str | None = None
+    included_occupations: str | None = None
+    excluded_occupations: str | None = None
+    notes: str | None = None
     group_id: int | None = None
 
     @field_validator("title")
@@ -78,7 +86,11 @@ class OccupationResponse(BaseModel):
     level: int
     code: str
     title: str
-    definition: str | None
+    definition: str | None = None
+    tasks_include: str | None = None
+    included_occupations: str | None = None
+    excluded_occupations: str | None = None
+    notes: str | None = None
     group_id: int
     group: OccupationGroupResponse
     created_at: datetime

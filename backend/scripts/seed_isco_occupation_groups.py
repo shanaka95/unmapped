@@ -21,10 +21,12 @@ GROUPS = [
 
 def seed():
     with SessionLocal() as session:
-        existing = session.scalars(select(IscoOccupationGroup)).all()
+        existing = session.query(IscoOccupationGroup).all()
         if existing:
-            print(f"ISCO occupation groups already exist ({len(existing)} found). Skipping.")
-            return
+            print(f"Deleting {len(existing)} existing ISCO occupation groups.")
+            for g in existing:
+                session.delete(g)
+            session.commit()
 
         records = [IscoOccupationGroup(**data) for data in GROUPS]
         session.add_all(records)
