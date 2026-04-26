@@ -1,0 +1,155 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "unmapped": "Unmapped",
+    "admin": "Admin",
+    "signOut": "Sign Out",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "creating": "Creating...",
+    "saving": "Saving...",
+    "search": "Search...",
+    "clear": "Clear",
+    "backToList": "Back to list"
+  },
+  "footer": {
+    "copyright": "© 2026 UNMAPPED",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "help": "Help"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "confirmPassword": "Confirm Password",
+    "newPassword": "New Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing In...",
+    "creatingAccount": "Creating Account...",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account? Register",
+    "hasAccount": "Already have an account? Sign In",
+    "resetPassword": "Reset Password",
+    "resetting": "Resetting...",
+    "sendResetLink": "Send Reset Link",
+    "sending": "Sending...",
+    "resetSent": "If an account with that email exists, a reset link has been sent to your inbox.",
+    "backToSignIn": "Back to Sign In",
+    "verifyEmail": "Verify email",
+    "verifying": "Verifying your email...",
+    "verifySuccess": "Your email has been verified successfully.",
+    "continueToSignIn": "Continue to Sign In",
+    "verifyExpired": "This verification link is invalid or has expired.",
+    "setNewPassword": "Set new password",
+    "invalidLink": "Invalid link",
+    "resetExpired": "This password reset link is invalid or has expired. Please request a new one.",
+    "requestNewLink": "Request new reset link",
+    "resetSuccess": "Your password has been reset successfully. You can now sign in with your new password.",
+    "emailPlaceholder": "name@example.com",
+    "passwordPlaceholder": "••••••••",
+    "namePlaceholder": "John Doe"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "emailVerified": "Email verified",
+    "emailNotVerified": "Email not verified"
+  },
+  "admin": {
+    "overview": "Overview",
+    "sectors": "Sectors",
+    "occupations": "Occupations",
+    "stats": {
+      "totalUsers": "Total Users",
+      "verifiedUsers": "Verified Users",
+      "sectors": "Sectors",
+      "occupations": "Occupations"
+    },
+    "users": {
+      "allUsers": "All Users",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "verified": "Verified"
+    },
+    "sector": {
+      "addSector": "Add Sector",
+      "title": "Title",
+      "description": "Description",
+      "iloSector": "ILO Sector",
+      "selectOrAi": "Select or use AI to auto-fill",
+      "aiSuggest": "AI Suggest",
+      "classifying": "Classifying...",
+      "enterTitleFirst": "Enter a title first",
+      "aiSuggestTooltip": "Let AI suggest the best ILO sector",
+      "createSector": "Create Sector",
+      "searchSectors": "Search sectors...",
+      "noSectors": "No sectors yet. Add your first sector above.",
+      "noSearchResults": "No sectors match your search.",
+      "titlePlaceholder": "e.g. Software Development",
+      "descriptionPlaceholder": "Brief description of this sector..."
+    },
+    "occupation": {
+      "addOccupation": "Add Occupation",
+      "level": "Level",
+      "title": "Title",
+      "titlePlaceholder": "e.g. Software Developer",
+      "definition": "Definition",
+      "definitionPlaceholder": "Describe this occupation...",
+      "occupationGroup": "Occupation Group",
+      "selectGroup": "Select group",
+      "selectLevel": "Select level",
+      "createOccupation": "Create Occupation",
+      "searchOccupations": "Search occupations...",
+      "allGroups": "All groups",
+      "allLevels": "All levels",
+      "notFound": "No occupations found. Add one above or adjust your filters.",
+      "saveChanges": "Save Changes",
+      "group": "Group",
+      "skillLevel": "Skill Level {{level}}",
+      "created": "Created",
+      "updated": "Updated"
+    },
+    "level": {
+      "1": "Major",
+      "2": "Sub-Major",
+      "3": "Minor",
+      "4": "Unit"
+    },
+    "levelOption": {
+      "1": "1 — Major",
+      "2": "2 — Sub-Major",
+      "3": "3 — Minor",
+      "4": "4 — Unit"
+    }
+  },
+  "validation": {
+    "atLeast8": "At least 8 characters",
+    "oneUppercase": "One uppercase letter",
+    "oneLowercase": "One lowercase letter",
+    "oneDigit": "One digit",
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email address",
+    "passwordRequired": "Password is required",
+    "requires": "Requires: ",
+    "confirmPassword": "Please confirm your password",
+    "passwordsMismatch": "Passwords do not match"
+  },
+  "api": {
+    "sessionExpired": "Session expired",
+    "serverError": "Server error ({{status}})",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "pagination": {
+    "range": "{{from}}–{{to}} of {{total}}"
+  },
+  "select": {
+    "placeholder": "Select...",
+    "search": "Search...",
+    "noResults": "No results"
+  }
+}

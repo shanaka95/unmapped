@@ -1,9 +1,11 @@
 import { StrictMode, lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
+import './i18n'
 import './index.css'
 
 const Login = lazy(() => import('./pages/Login'))
@@ -15,10 +17,11 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 
 function LoadingFallback() {
+  const { t } = useTranslation()
   return (
     <main className="flex-grow flex items-center justify-center min-h-screen">
       <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-        Loading...
+        {t('common.loading')}
       </span>
     </main>
   )

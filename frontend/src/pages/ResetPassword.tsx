@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import AuthLayout from '../components/AuthLayout'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
@@ -7,6 +8,7 @@ import { resetPassword } from '../api/auth'
 import { validatePasswordReset, type FieldErrors } from '../utils/validation'
 
 export default function ResetPassword() {
+  const { t } = useTranslation()
   const [searchParams] = useSearchParams()
   const token = searchParams.get('token')
 
@@ -48,16 +50,16 @@ export default function ResetPassword() {
 
   if (!token) {
     return (
-      <AuthLayout title="Invalid link">
+      <AuthLayout title={t('auth.invalidLink')}>
         <div className="flex flex-col gap-8">
           <p className="font-poppins text-body-md text-on-surface">
-            This password reset link is invalid or has expired. Please request a new one.
+            {t('auth.resetExpired')}
           </p>
           <Link
             className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 border-b border-transparent hover:border-primary pb-0.5 text-center"
             to="/forgot-password"
           >
-            Request new reset link
+            {t('auth.requestNewLink')}
           </Link>
         </div>
       </AuthLayout>
@@ -65,17 +67,17 @@ export default function ResetPassword() {
   }
 
   return (
-    <AuthLayout title="Set new password">
+    <AuthLayout title={t('auth.setNewPassword')}>
       {success ? (
         <div className="flex flex-col gap-8">
           <p className="font-poppins text-body-md text-on-surface">
-            Your password has been reset successfully. You can now sign in with your new password.
+            {t('auth.resetSuccess')}
           </p>
           <Link
             className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 border-b border-transparent hover:border-primary pb-0.5 text-center"
             to="/"
           >
-            Sign In
+            {t('auth.signIn')}
           </Link>
         </div>
       ) : (
@@ -84,20 +86,20 @@ export default function ResetPassword() {
             <p className="font-poppins text-label-sm text-error">{formError}</p>
           )}
           <InputField
-            label="New Password"
+            label={t('auth.newPassword')}
             id="new-password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t('auth.passwordPlaceholder')}
             value={newPassword}
             onChange={e => { setNewPassword(e.target.value); setFieldErrors(prev => ({ ...prev, password: '' })) }}
             error={fieldErrors.password}
             required
           />
           <InputField
-            label="Confirm Password"
+            label={t('auth.confirmPassword')}
             id="confirm-password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t('auth.passwordPlaceholder')}
             value={confirmPassword}
             onChange={e => { setConfirmPassword(e.target.value); setFieldErrors(prev => ({ ...prev, confirmPassword: '' })) }}
             error={fieldErrors.confirmPassword}
@@ -105,7 +107,7 @@ export default function ResetPassword() {
           />
           <div className="flex flex-col gap-4 mt-4">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Resetting...' : 'Reset Password'}
+              {isSubmitting ? t('auth.resetting') : t('auth.resetPassword')}
             </Button>
           </div>
         </form>

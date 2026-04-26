@@ -1,15 +1,17 @@
 import { Navigate, useLocation } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 
 export default function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated, isLoading } = useAuth()
   const location = useLocation()
+  const { t } = useTranslation()
 
   if (isLoading) {
     return (
       <main className="flex-grow flex items-center justify-center min-h-screen">
         <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-          Loading...
+          {t('common.loading')}
         </span>
       </main>
     )

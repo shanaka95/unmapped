@@ -1,3 +1,5 @@
+import i18n from '../i18n'
+
 const API_BASE = '/api'
 
 interface ApiResponse<T> {
@@ -44,7 +46,7 @@ class ApiClient {
         })
         return this.parseResponse<T>(retryResponse)
       }
-      return { data: null, error: 'Session expired', status: 401 }
+      return { data: null, error: i18n.t('api.sessionExpired'), status: 401 }
     }
 
     return this.parseResponse<T>(response)
@@ -61,14 +63,14 @@ class ApiClient {
     try {
       body = await response.json()
     } catch {
-      return { data: null, error: `Server error (${status})`, status }
+      return { data: null, error: i18n.t('api.serverError', { status }), status }
     }
 
     if (response.ok) {
       return { data: body as T, error: null, status }
     }
 
-    const error = (body.detail as string) || (body.message as string) || 'An unexpected error occurred'
+    const error = (body.detail as string) || (body.message as string) || i18n.t('api.unexpectedError')
     return { data: null, error, status }
   }
 

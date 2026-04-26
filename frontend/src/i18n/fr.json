@@ -1,0 +1,155 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "unmapped": "Unmapped",
+    "admin": "Admin",
+    "signOut": "Déconnexion",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "creating": "Création...",
+    "saving": "Enregistrement...",
+    "search": "Rechercher...",
+    "clear": "Effacer",
+    "backToList": "Retour à la liste"
+  },
+  "footer": {
+    "copyright": "© 2026 UNMAPPED",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "help": "Aide"
+  },
+  "auth": {
+    "welcomeBack": "Bon retour",
+    "createAccount": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "fullName": "Nom complet",
+    "confirmPassword": "Confirmer le mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion en cours...",
+    "creatingAccount": "Création du compte...",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Vous n'avez pas de compte ? Inscrivez-vous",
+    "hasAccount": "Vous avez déjà un compte ? Se connecter",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "resetting": "Réinitialisation...",
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "sending": "Envoi en cours...",
+    "resetSent": "Si un compte avec cet e-mail existe, un lien de réinitialisation a été envoyé dans votre boîte de réception.",
+    "backToSignIn": "Retour à la connexion",
+    "verifyEmail": "Vérifier l'e-mail",
+    "verifying": "Vérification de votre e-mail...",
+    "verifySuccess": "Votre e-mail a été vérifié avec succès.",
+    "continueToSignIn": "Continuer vers la connexion",
+    "verifyExpired": "Ce lien de vérification est invalide ou a expiré.",
+    "setNewPassword": "Définir un nouveau mot de passe",
+    "invalidLink": "Lien invalide",
+    "resetExpired": "Ce lien de réinitialisation de mot de passe est invalide ou a expiré. Veuillez en demander un nouveau.",
+    "requestNewLink": "Demander un nouveau lien de réinitialisation",
+    "resetSuccess": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+    "emailPlaceholder": "nom@exemple.fr",
+    "passwordPlaceholder": "••••••••",
+    "namePlaceholder": "Jean Dupont"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue, {{name}}",
+    "emailVerified": "E-mail vérifié",
+    "emailNotVerified": "E-mail non vérifié"
+  },
+  "admin": {
+    "overview": "Vue d'ensemble",
+    "sectors": "Secteurs",
+    "occupations": "Professions",
+    "stats": {
+      "totalUsers": "Total des utilisateurs",
+      "verifiedUsers": "Utilisateurs vérifiés",
+      "sectors": "Secteurs",
+      "occupations": "Professions"
+    },
+    "users": {
+      "allUsers": "Tous les utilisateurs",
+      "name": "Nom",
+      "email": "E-mail",
+      "role": "Rôle",
+      "verified": "Vérifié"
+    },
+    "sector": {
+      "addSector": "Ajouter un secteur",
+      "title": "Titre",
+      "description": "Description",
+      "iloSector": "Secteur OIT",
+      "selectOrAi": "Sélectionner ou utiliser l'IA pour remplir automatiquement",
+      "aiSuggest": "Suggestion IA",
+      "classifying": "Classification...",
+      "enterTitleFirst": "Entrez un titre d'abord",
+      "aiSuggestTooltip": "Laissez l'IA suggérer le meilleur secteur OIT",
+      "createSector": "Créer le secteur",
+      "searchSectors": "Rechercher des secteurs...",
+      "noSectors": "Aucun secteur pour l'instant. Ajoutez votre premier secteur ci-dessus.",
+      "noSearchResults": "Aucun secteur ne correspond à votre recherche.",
+      "titlePlaceholder": "ex. Développement logiciel",
+      "descriptionPlaceholder": "Brève description de ce secteur..."
+    },
+    "occupation": {
+      "addOccupation": "Ajouter une profession",
+      "level": "Niveau",
+      "title": "Titre",
+      "titlePlaceholder": "ex. Développeur logiciel",
+      "definition": "Définition",
+      "definitionPlaceholder": "Décrivez cette profession...",
+      "occupationGroup": "Groupe professionnel",
+      "selectGroup": "Sélectionner un groupe",
+      "selectLevel": "Sélectionner un niveau",
+      "createOccupation": "Créer la profession",
+      "searchOccupations": "Rechercher des professions...",
+      "allGroups": "Tous les groupes",
+      "allLevels": "Tous les niveaux",
+      "notFound": "Aucune profession trouvée. Ajoutez-en une ci-dessus ou ajustez vos filtres.",
+      "saveChanges": "Enregistrer les modifications",
+      "group": "Groupe",
+      "skillLevel": "Niveau de compétence {{level}}",
+      "created": "Créé",
+      "updated": "Mis à jour"
+    },
+    "level": {
+      "1": "Majeur",
+      "2": "Sous-majeur",
+      "3": "Mineur",
+      "4": "Unité"
+    },
+    "levelOption": {
+      "1": "1 — Majeur",
+      "2": "2 — Sous-majeur",
+      "3": "3 — Mineur",
+      "4": "4 — Unité"
+    }
+  },
+  "validation": {
+    "atLeast8": "Au moins 8 caractères",
+    "oneUppercase": "Une lettre majuscule",
+    "oneLowercase": "Une lettre minuscule",
+    "oneDigit": "Un chiffre",
+    "nameRequired": "Le nom est requis",
+    "emailRequired": "L'e-mail est requis",
+    "emailInvalid": "Entrez une adresse e-mail valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "requires": "Requis : ",
+    "confirmPassword": "Veuillez confirmer votre mot de passe",
+    "passwordsMismatch": "Les mots de passe ne correspondent pas"
+  },
+  "api": {
+    "sessionExpired": "Session expirée",
+    "serverError": "Erreur serveur ({{status}})",
+    "unexpectedError": "Une erreur inattendue s'est produite"
+  },
+  "pagination": {
+    "range": "{{from}}–{{to}} sur {{total}}"
+  },
+  "select": {
+    "placeholder": "Sélectionner...",
+    "search": "Rechercher...",
+    "noResults": "Aucun résultat"
+  }
+}

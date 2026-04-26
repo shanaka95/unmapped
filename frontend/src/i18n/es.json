@@ -1,0 +1,155 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "unmapped": "Unmapped",
+    "admin": "Admin",
+    "signOut": "Cerrar sesión",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "creating": "Creando...",
+    "saving": "Guardando...",
+    "search": "Buscar...",
+    "clear": "Limpiar",
+    "backToList": "Volver a la lista"
+  },
+  "footer": {
+    "copyright": "© 2026 UNMAPPED",
+    "terms": "Términos",
+    "privacy": "Privacidad",
+    "help": "Ayuda"
+  },
+  "auth": {
+    "welcomeBack": "Bienvenido de nuevo",
+    "createAccount": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "fullName": "Nombre completo",
+    "confirmPassword": "Confirmar contraseña",
+    "newPassword": "Nueva contraseña",
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando sesión...",
+    "creatingAccount": "Creando cuenta...",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta? Regístrate",
+    "hasAccount": "¿Ya tienes una cuenta? Inicia sesión",
+    "resetPassword": "Restablecer contraseña",
+    "resetting": "Restableciendo...",
+    "sendResetLink": "Enviar enlace de restablecimiento",
+    "sending": "Enviando...",
+    "resetSent": "Si existe una cuenta con ese correo electrónico, se ha enviado un enlace de restablecimiento a tu bandeja de entrada.",
+    "backToSignIn": "Volver a iniciar sesión",
+    "verifyEmail": "Verificar correo electrónico",
+    "verifying": "Verificando tu correo electrónico...",
+    "verifySuccess": "Tu correo electrónico ha sido verificado con éxito.",
+    "continueToSignIn": "Continuar al inicio de sesión",
+    "verifyExpired": "Este enlace de verificación no es válido o ha caducado.",
+    "setNewPassword": "Establecer nueva contraseña",
+    "invalidLink": "Enlace no válido",
+    "resetExpired": "Este enlace de restablecimiento de contraseña no es válido o ha caducado. Por favor, solicita uno nuevo.",
+    "requestNewLink": "Solicitar nuevo enlace de restablecimiento",
+    "resetSuccess": "Tu contraseña ha sido restablecida con éxito. Ahora puedes iniciar sesión con tu nueva contraseña.",
+    "emailPlaceholder": "nombre@ejemplo.es",
+    "passwordPlaceholder": "••••••••",
+    "namePlaceholder": "Juan García"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido, {{name}}",
+    "emailVerified": "Correo electrónico verificado",
+    "emailNotVerified": "Correo electrónico no verificado"
+  },
+  "admin": {
+    "overview": "Resumen",
+    "sectors": "Sectores",
+    "occupations": "Ocupaciones",
+    "stats": {
+      "totalUsers": "Total de usuarios",
+      "verifiedUsers": "Usuarios verificados",
+      "sectors": "Sectores",
+      "occupations": "Ocupaciones"
+    },
+    "users": {
+      "allUsers": "Todos los usuarios",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "verified": "Verificado"
+    },
+    "sector": {
+      "addSector": "Añadir sector",
+      "title": "Título",
+      "description": "Descripción",
+      "iloSector": "Sector OIT",
+      "selectOrAi": "Seleccionar o usar IA para autocompletar",
+      "aiSuggest": "Sugerir con IA",
+      "classifying": "Clasificando...",
+      "enterTitleFirst": "Introduce un título primero",
+      "aiSuggestTooltip": "Deja que la IA sugiera el mejor sector OIT",
+      "createSector": "Crear sector",
+      "searchSectors": "Buscar sectores...",
+      "noSectors": "Aún no hay sectores. Añade tu primer sector arriba.",
+      "noSearchResults": "Ningún sector coincide con tu búsqueda.",
+      "titlePlaceholder": "ej. Desarrollo de software",
+      "descriptionPlaceholder": "Breve descripción de este sector..."
+    },
+    "occupation": {
+      "addOccupation": "Añadir ocupación",
+      "level": "Nivel",
+      "title": "Título",
+      "titlePlaceholder": "ej. Desarrollador de software",
+      "definition": "Definición",
+      "definitionPlaceholder": "Describe esta ocupación...",
+      "occupationGroup": "Grupo de ocupación",
+      "selectGroup": "Seleccionar grupo",
+      "selectLevel": "Seleccionar nivel",
+      "createOccupation": "Crear ocupación",
+      "searchOccupations": "Buscar ocupaciones...",
+      "allGroups": "Todos los grupos",
+      "allLevels": "Todos los niveles",
+      "notFound": "No se encontraron ocupaciones. Añade una arriba o ajusta tus filtros.",
+      "saveChanges": "Guardar cambios",
+      "group": "Grupo",
+      "skillLevel": "Nivel de competencia {{level}}",
+      "created": "Creado",
+      "updated": "Actualizado"
+    },
+    "level": {
+      "1": "Principal",
+      "2": "Subprincipal",
+      "3": "Menor",
+      "4": "Unidad"
+    },
+    "levelOption": {
+      "1": "1 — Principal",
+      "2": "2 — Subprincipal",
+      "3": "3 — Menor",
+      "4": "4 — Unidad"
+    }
+  },
+  "validation": {
+    "atLeast8": "Al menos 8 caracteres",
+    "oneUppercase": "Una letra mayúscula",
+    "oneLowercase": "Una letra minúscula",
+    "oneDigit": "Un dígito",
+    "nameRequired": "El nombre es obligatorio",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "emailInvalid": "Introduce una dirección de correo electrónico válida",
+    "passwordRequired": "La contraseña es obligatoria",
+    "requires": "Requiere: ",
+    "confirmPassword": "Por favor, confirma tu contraseña",
+    "passwordsMismatch": "Las contraseñas no coinciden"
+  },
+  "api": {
+    "sessionExpired": "Sesión expirada",
+    "serverError": "Error del servidor ({{status}})",
+    "unexpectedError": "Ocurrió un error inesperado"
+  },
+  "pagination": {
+    "range": "{{from}}–{{to}} de {{total}}"
+  },
+  "select": {
+    "placeholder": "Seleccionar...",
+    "search": "Buscar...",
+    "noResults": "Sin resultados"
+  }
+}

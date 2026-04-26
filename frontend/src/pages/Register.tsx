@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import AuthLayout from '../components/AuthLayout'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
@@ -8,6 +9,7 @@ import { useAuth } from '../context/AuthContext'
 import { validateRegistration, type FieldErrors } from '../utils/validation'
 
 export default function Register() {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,46 +46,46 @@ export default function Register() {
   }
 
   return (
-    <AuthLayout title="Create account">
+    <AuthLayout title={t('auth.createAccount')}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         {formError && (
           <p className="font-poppins text-label-sm text-error">{formError}</p>
         )}
         <InputField
-          label="Full Name"
+          label={t('auth.fullName')}
           id="name"
           type="text"
-          placeholder="John Doe"
+          placeholder={t('auth.namePlaceholder')}
           value={name}
           onChange={e => { setName(e.target.value); setFieldErrors(prev => ({ ...prev, name: '' })) }}
           error={fieldErrors.name}
           required
         />
         <InputField
-          label="Email"
+          label={t('auth.email')}
           id="email"
           type="email"
-          placeholder="name@example.com"
+          placeholder={t('auth.emailPlaceholder')}
           value={email}
           onChange={e => { setEmail(e.target.value); setFieldErrors(prev => ({ ...prev, email: '' })) }}
           error={fieldErrors.email}
           required
         />
         <InputField
-          label="Password"
+          label={t('auth.password')}
           id="password"
           type="password"
-          placeholder="••••••••"
+          placeholder={t('auth.passwordPlaceholder')}
           value={password}
           onChange={e => { setPassword(e.target.value); setFieldErrors(prev => ({ ...prev, password: '' })) }}
           error={fieldErrors.password}
           required
         />
         <InputField
-          label="Confirm Password"
+          label={t('auth.confirmPassword')}
           id="confirm-password"
           type="password"
-          placeholder="••••••••"
+          placeholder={t('auth.passwordPlaceholder')}
           value={confirmPassword}
           onChange={e => { setConfirmPassword(e.target.value); setFieldErrors(prev => ({ ...prev, confirmPassword: '' })) }}
           error={fieldErrors.confirmPassword}
@@ -91,14 +93,14 @@ export default function Register() {
         />
         <div className="flex flex-col gap-4 mt-4">
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating Account...' : 'Create Account'}
+            {isSubmitting ? t('auth.creatingAccount') : t('auth.createAccount')}
           </Button>
           <div className="text-center">
             <Link
               className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 border-b border-transparent hover:border-primary pb-0.5"
               to="/"
             >
-              Already have an account? Sign In
+              {t('auth.hasAccount')}
             </Link>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { getAdminStats, getAdminUsers, type AdminStats, type User } from '../api/auth'
 import {
@@ -14,10 +15,18 @@ import Pagination from '../components/Pagination'
 import SearchBar from '../components/SearchBar'
 import SelectField from '../components/SelectField'
 import Footer from '../components/Footer'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 
 type Section = 'overview' | 'sectors' | 'occupations'
 
+const SECTION_KEYS: Record<Section, string> = {
+  overview: 'admin.overview',
+  sectors: 'admin.sectors',
+  occupations: 'admin.occupations',
+}
+
 export default function AdminDashboard() {
+  const { t } = useTranslation()
   const { user, logout } = useAuth()
   const [section, setSection] = useState<Section>('overview')
 
@@ -25,17 +34,18 @@ export default function AdminDashboard() {
     <div className="bg-background text-on-surface antialiased min-h-screen flex flex-col font-poppins text-body-md">
       <header className="border-b border-outline-variant px-6 sm:px-margin-page py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="font-poppins text-h2 text-on-surface">Unmapped</h1>
+          <h1 className="font-poppins text-h2 text-on-surface">{t('common.unmapped')}</h1>
           <span className="font-poppins text-label-sm bg-primary text-on-primary px-2 py-1 rounded-default uppercase tracking-wider">
-            Admin
+            {t('common.admin')}
           </span>
         </div>
         <div className="flex items-center gap-6">
+          <LanguageSwitcher />
           <button
             onClick={logout}
             className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 uppercase tracking-wider cursor-pointer"
           >
-            Sign Out
+            {t('common.signOut')}
           </button>
         </div>
       </header>
@@ -53,7 +63,7 @@ export default function AdminDashboard() {
                   : 'text-on-surface-variant hover:bg-surface-container'
               }`}
             >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
+              {t(SECTION_KEYS[s])}
             </button>
           ))}
         </nav>
@@ -70,7 +80,7 @@ export default function AdminDashboard() {
                   : 'text-on-surface-variant'
               }`}
             >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
+              {t(SECTION_KEYS[s])}
             </button>
           ))}
         </div>
@@ -91,6 +101,7 @@ export default function AdminDashboard() {
 }
 
 function OverviewSection({ user }: { user: User | null }) {
+  const { t } = useTranslation()
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -108,7 +119,7 @@ function OverviewSection({ user }: { user: User | null }) {
   if (loading) {
     return (
       <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-        Loading...
+        {t('common.loading')}
       </span>
     )
   }
@@ -116,7 +127,7 @@ function OverviewSection({ user }: { user: User | null }) {
   return (
     <div className="flex flex-col gap-12">
       <div>
-        <h2 className="font-poppins text-h1 text-on-surface">Overview</h2>
+        <h2 className="font-poppins text-h1 text-on-surface">{t('admin.overview')}</h2>
         <p className="font-poppins text-body-lg text-on-surface-variant mt-2">
           {user?.email}
         </p>
@@ -125,7 +136,7 @@ function OverviewSection({ user }: { user: User | null }) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
           <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-            Total Users
+            {t('admin.stats.totalUsers')}
           </span>
           <span className="font-poppins text-h1 text-on-surface">
             {stats?.total_users ?? 0}
@@ -133,7 +144,7 @@ function OverviewSection({ user }: { user: User | null }) {
         </div>
         <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
           <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-            Verified Users
+            {t('admin.stats.verifiedUsers')}
           </span>
           <span className="font-poppins text-h1 text-on-surface">
             {stats?.verified_users ?? 0}
@@ -141,7 +152,7 @@ function OverviewSection({ user }: { user: User | null }) {
         </div>
         <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
           <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-            Sectors
+            {t('admin.stats.sectors')}
           </span>
           <span className="font-poppins text-h1 text-on-surface">
             {stats?.total_sectors ?? 0}
@@ -149,7 +160,7 @@ function OverviewSection({ user }: { user: User | null }) {
         </div>
         <div className="border border-outline-variant rounded-xl p-6 flex flex-col gap-2">
           <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-            Occupations
+            {t('admin.stats.occupations')}
           </span>
           <span className="font-poppins text-h1 text-on-surface">
             {stats?.total_occupations ?? 0}
@@ -158,22 +169,22 @@ function OverviewSection({ user }: { user: User | null }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h3 className="font-poppins text-h2 text-on-surface">All Users</h3>
+        <h3 className="font-poppins text-h2 text-on-surface">{t('admin.users.allUsers')}</h3>
         <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-outline-variant bg-surface-container-low">
                 <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Name
+                  {t('admin.users.name')}
                 </th>
                 <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Email
+                  {t('admin.users.email')}
                 </th>
                 <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Role
+                  {t('admin.users.role')}
                 </th>
                 <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Verified
+                  {t('admin.users.verified')}
                 </th>
               </tr>
             </thead>
@@ -211,6 +222,7 @@ function OverviewSection({ user }: { user: User | null }) {
 }
 
 function SectorsSection() {
+  const { t } = useTranslation()
   const [sectors, setSectors] = useState<Sector[]>([])
   const [iloSectors, setIloSectors] = useState<IloSector[]>([])
   const [loading, setLoading] = useState(true)
@@ -238,11 +250,11 @@ function SectorsSection() {
     setFormError('')
 
     if (!title.trim()) {
-      setFormError('Title is required')
+      setFormError(t('admin.sector.title') + ' is required')
       return
     }
     if (!iloSectorId) {
-      setFormError('Please select an ILO sector')
+      setFormError(t('admin.sector.iloSector') + ' is required')
       return
     }
 
@@ -305,13 +317,13 @@ function SectorsSection() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <h2 className="font-poppins text-h1 text-on-surface">Sectors</h2>
+        <h2 className="font-poppins text-h1 text-on-surface">{t('admin.sectors')}</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">{showForm ? 'close' : 'add'}</span>
-          {showForm ? 'Cancel' : 'Add Sector'}
+          {showForm ? t('common.cancel') : t('admin.sector.addSector')}
         </button>
       </div>
 
@@ -325,9 +337,9 @@ function SectorsSection() {
             <p className="font-poppins text-label-sm text-error">{formError}</p>
           )}
           <InputField
-            label="Title"
+            label={t('admin.sector.title')}
             id="sector-title"
-            placeholder="e.g. Software Development"
+            placeholder={t('admin.sector.titlePlaceholder')}
             value={title}
             onChange={e => setTitle(e.target.value)}
             required
@@ -337,11 +349,11 @@ function SectorsSection() {
               className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
               htmlFor="sector-description"
             >
-              Description
+              {t('admin.sector.description')}
             </label>
             <textarea
               id="sector-description"
-              placeholder="Brief description of this sector..."
+              placeholder={t('admin.sector.descriptionPlaceholder')}
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={3}
@@ -354,25 +366,25 @@ function SectorsSection() {
                 className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
                 htmlFor="ilo-sector"
               >
-                ILO Sector
+                {t('admin.sector.iloSector')}
               </label>
               <button
                 type="button"
                 onClick={handleAiClassify}
                 disabled={!canClassify || isClassifying}
                 className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"
-                title={!canClassify ? 'Enter a title first' : 'Let AI suggest the best ILO sector'}
+                title={!canClassify ? t('admin.sector.enterTitleFirst') : t('admin.sector.aiSuggestTooltip')}
               >
                 <span className={`material-symbols-outlined text-[16px] ${isClassifying ? 'animate-spin' : ''}`}>
                   {isClassifying ? 'progress_activity' : 'auto_awesome'}
                 </span>
-                {isClassifying ? 'Classifying...' : 'AI Suggest'}
+                {isClassifying ? t('admin.sector.classifying') : t('admin.sector.aiSuggest')}
               </button>
             </div>
             <SelectField
               id="ilo-sector"
               options={iloOptions}
-              placeholder="Select or use AI to auto-fill"
+              placeholder={t('admin.sector.selectOrAi')}
               value={iloSectorId}
               onChange={setIloSectorId}
             />
@@ -390,7 +402,7 @@ function SectorsSection() {
             disabled={isSubmitting}
             className="self-start font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
           >
-            {isSubmitting ? 'Creating...' : 'Create Sector'}
+            {isSubmitting ? t('common.creating') : t('admin.sector.createSector')}
           </button>
         </form>
       )}
@@ -401,18 +413,18 @@ function SectorsSection() {
           id="sectors-search"
           value={search}
           onChange={v => { setSearch(v); setPage(1) }}
-          placeholder="Search sectors..."
+          placeholder={t('admin.sector.searchSectors')}
         />
       )}
       {loading ? (
         <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-          Loading...
+          {t('common.loading')}
         </span>
       ) : filteredSectors.length === 0 ? (
         <div className="border border-outline-variant rounded-xl p-12 text-center">
           <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">category</span>
           <p className="font-poppins text-body-md text-on-surface-variant">
-            {sectors.length === 0 ? 'No sectors yet. Add your first sector above.' : 'No sectors match your search.'}
+            {sectors.length === 0 ? t('admin.sector.noSectors') : t('admin.sector.noSearchResults')}
           </p>
         </div>
       ) : (
@@ -422,13 +434,13 @@ function SectorsSection() {
               <thead>
                 <tr className="border-b border-outline-variant bg-surface-container-low">
                   <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                    Title
+                    {t('admin.sector.title')}
                   </th>
                   <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                    Description
+                    {t('admin.sector.description')}
                   </th>
                   <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                    ILO Sector
+                    {t('admin.sector.iloSector')}
                   </th>
                   <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
                   </th>
@@ -451,7 +463,7 @@ function SectorsSection() {
                         onClick={() => handleDelete(s.id)}
                         className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
                       >
-                        Delete
+                        {t('common.delete')}
                       </button>
                     </td>
                   </tr>
@@ -474,6 +486,7 @@ function SectorsSection() {
 }
 
 function OccupationsSection() {
+  const { t } = useTranslation()
   const [occupations, setOccupations] = useState<Occupation[]>([])
   const [groups, setGroups] = useState<OccupationGroup[]>([])
   const [loading, setLoading] = useState(true)
@@ -556,9 +569,9 @@ function OccupationsSection() {
     if (!selected) return
     setEditError('')
 
-    if (!editTitle.trim()) { setEditError('Title is required'); return }
-    if (!editLevel) { setEditError('Level is required'); return }
-    if (!editGroupId) { setEditError('Please select a group'); return }
+    if (!editTitle.trim()) { setEditError(t('admin.occupation.title') + ' is required'); return }
+    if (!editLevel) { setEditError(t('admin.occupation.level') + ' is required'); return }
+    if (!editGroupId) { setEditError(t('admin.occupation.selectGroup')); return }
 
     setIsSaving(true)
     const result = await updateOccupation(selected.id, {
@@ -582,9 +595,9 @@ function OccupationsSection() {
     e.preventDefault()
     setFormError('')
 
-    if (!title.trim()) { setFormError('Title is required'); return }
-    if (!level) { setFormError('Level is required'); return }
-    if (!groupId) { setFormError('Please select an occupation group'); return }
+    if (!title.trim()) { setFormError(t('admin.occupation.title') + ' is required'); return }
+    if (!level) { setFormError(t('admin.occupation.level') + ' is required'); return }
+    if (!groupId) { setFormError(t('admin.occupation.selectGroup')); return }
 
     setIsSubmitting(true)
     const result = await createOccupation({
@@ -621,18 +634,11 @@ function OccupationsSection() {
   }))
 
   const levelOptions = [
-    { value: '1', label: '1 — Major' },
-    { value: '2', label: '2 — Sub-Major' },
-    { value: '3', label: '3 — Minor' },
-    { value: '4', label: '4 — Unit' },
+    { value: '1', label: t('admin.levelOption.1') },
+    { value: '2', label: t('admin.levelOption.2') },
+    { value: '3', label: t('admin.levelOption.3') },
+    { value: '4', label: t('admin.levelOption.4') },
   ]
-
-  const levelLabels: Record<string, string> = {
-    '1': 'Major',
-    '2': 'Sub-Major',
-    '3': 'Minor',
-    '4': 'Unit',
-  }
 
   const q = search.toLowerCase()
   const filtered = q
@@ -651,13 +657,13 @@ function OccupationsSection() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <h2 className="font-poppins text-h1 text-on-surface">Occupations</h2>
+        <h2 className="font-poppins text-h1 text-on-surface">{t('admin.occupations')}</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">{showForm ? 'close' : 'add'}</span>
-          {showForm ? 'Cancel' : 'Add Occupation'}
+          {showForm ? t('common.cancel') : t('admin.occupation.addOccupation')}
         </button>
       </div>
 
@@ -671,17 +677,17 @@ function OccupationsSection() {
             <p className="font-poppins text-label-sm text-error">{formError}</p>
           )}
           <SelectField
-            label="Level"
+            label={t('admin.occupation.level')}
             id="occ-level"
             options={levelOptions}
-            placeholder="Select level"
+            placeholder={t('admin.occupation.selectLevel')}
             value={level}
             onChange={setLevel}
           />
           <InputField
-            label="Title"
+            label={t('admin.occupation.title')}
             id="occ-title"
-            placeholder="e.g. Software Developer"
+            placeholder={t('admin.occupation.titlePlaceholder')}
             value={title}
             onChange={e => setTitle(e.target.value)}
             required
@@ -691,11 +697,11 @@ function OccupationsSection() {
               className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
               htmlFor="occ-definition"
             >
-              Definition
+              {t('admin.occupation.definition')}
             </label>
             <textarea
               id="occ-definition"
-              placeholder="Describe this occupation..."
+              placeholder={t('admin.occupation.definitionPlaceholder')}
               value={definition}
               onChange={e => setDefinition(e.target.value)}
               rows={3}
@@ -703,10 +709,10 @@ function OccupationsSection() {
             />
           </div>
           <SelectField
-            label="Occupation Group"
+            label={t('admin.occupation.occupationGroup')}
             id="occ-group"
             options={groupOptions}
-            placeholder="Select group"
+            placeholder={t('admin.occupation.selectGroup')}
             value={groupId}
             onChange={setGroupId}
           />
@@ -723,7 +729,7 @@ function OccupationsSection() {
             disabled={isSubmitting}
             className="self-start font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
           >
-            {isSubmitting ? 'Creating...' : 'Create Occupation'}
+            {isSubmitting ? t('common.creating') : t('admin.occupation.createOccupation')}
           </button>
         </form>
       )}
@@ -736,14 +742,14 @@ function OccupationsSection() {
               id="occ-search"
               value={search}
               onChange={v => { setSearch(v); setPage(1) }}
-              placeholder="Search occupations..."
+              placeholder={t('admin.occupation.searchOccupations')}
             />
           </div>
           <div className="w-56">
             <SelectField
               id="filter-group"
               options={groupOptions}
-              placeholder="All groups"
+              placeholder={t('admin.occupation.allGroups')}
               value={filterGroupId}
               onChange={val => { setFilterGroupId(val); setPage(1) }}
             />
@@ -752,7 +758,7 @@ function OccupationsSection() {
             <SelectField
               id="filter-level"
               options={levelOptions}
-              placeholder="All levels"
+              placeholder={t('admin.occupation.allLevels')}
               value={filterLevel}
               onChange={val => { setFilterLevel(val); setPage(1) }}
             />
@@ -761,10 +767,9 @@ function OccupationsSection() {
             <button
               onClick={() => { setSearch(''); setFilterGroupId(''); setFilterLevel(''); setPage(1) }}
               className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider pb-2 flex-shrink-0"
-              title="Clear all filters"
             >
               <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
-              Clear
+              {t('common.clear')}
             </button>
           )}
         </div>
@@ -776,13 +781,13 @@ function OccupationsSection() {
         <div className={`flex-grow min-w-0 ${selected ? 'hidden lg:block' : ''}`}>
           {loading ? (
             <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-              Loading...
+              {t('common.loading')}
             </span>
           ) : filtered.length === 0 ? (
             <div className="border border-outline-variant rounded-xl p-12 text-center">
               <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">work</span>
               <p className="font-poppins text-body-md text-on-surface-variant">
-                No occupations found. Add one above or adjust your filters.
+                {t('admin.occupation.notFound')}
               </p>
             </div>
           ) : (
@@ -792,13 +797,13 @@ function OccupationsSection() {
                   <thead>
                     <tr className="border-b border-outline-variant bg-surface-container-low">
                       <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                        Title
+                        {t('admin.occupation.title')}
                       </th>
                       <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                        Level
+                        {t('admin.occupation.level')}
                       </th>
                       <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                        Group
+                        {t('admin.occupation.group')}
                       </th>
                       <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
                       </th>
@@ -827,7 +832,7 @@ function OccupationsSection() {
                             onClick={e => { e.stopPropagation(); handleDelete(o.id) }}
                             className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
                           >
-                            Delete
+                            {t('common.delete')}
                           </button>
                         </td>
                       </tr>
@@ -872,13 +877,13 @@ function OccupationsSection() {
                   <p className="font-poppins text-label-sm text-error">{editError}</p>
                 )}
                 <InputField
-                  label="Title"
+                  label={t('admin.occupation.title')}
                   id="edit-title"
                   value={editTitle}
                   onChange={e => setEditTitle(e.target.value)}
                 />
                 <SelectField
-                  label="Level"
+                  label={t('admin.occupation.level')}
                   id="edit-level"
                   options={levelOptions}
                   value={editLevel}
@@ -889,7 +894,7 @@ function OccupationsSection() {
                     className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
                     htmlFor="edit-definition"
                   >
-                    Definition
+                    {t('admin.occupation.definition')}
                   </label>
                   <textarea
                     id="edit-definition"
@@ -900,7 +905,7 @@ function OccupationsSection() {
                   />
                 </div>
                 <SelectField
-                  label="Occupation Group"
+                  label={t('admin.occupation.occupationGroup')}
                   id="edit-group"
                   options={groupOptions}
                   value={editGroupId}
@@ -912,50 +917,50 @@ function OccupationsSection() {
                     disabled={isSaving}
                     className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
                   >
-                    {isSaving ? 'Saving...' : 'Save Changes'}
+                    {isSaving ? t('common.saving') : t('admin.occupation.saveChanges')}
                   </button>
                   <button
                     type="button"
                     onClick={cancelEditing}
                     className="font-poppins text-label-sm text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer uppercase tracking-wider"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-col gap-6 p-6 flex-grow overflow-y-auto">
                 <div className="flex flex-col gap-1">
-                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Level</span>
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">{t('admin.occupation.level')}</span>
                   <span className="font-poppins text-body-md text-on-surface">
-                    {selected.level} — {levelLabels[String(selected.level)]}
+                    {selected.level} — {t(`admin.level.${selected.level}`)}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Group</span>
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">{t('admin.occupation.group')}</span>
                   <span className="font-poppins text-body-md text-on-surface">
                     {selected.group.name}
                   </span>
                   <span className="font-poppins text-label-sm text-on-surface-variant">
-                    Skill Level {selected.group.skill_level}
+                    {t('admin.occupation.skillLevel', { level: selected.group.skill_level })}
                   </span>
                 </div>
                 {selected.definition && (
                   <div className="flex flex-col gap-1">
-                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Definition</span>
+                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">{t('admin.occupation.definition')}</span>
                     <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
                       {selected.definition}
                     </p>
                   </div>
                 )}
                 <div className="flex flex-col gap-1">
-                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Created</span>
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">{t('admin.occupation.created')}</span>
                   <span className="font-poppins text-body-md text-on-surface-variant">
                     {new Date(selected.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Updated</span>
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">{t('admin.occupation.updated')}</span>
                   <span className="font-poppins text-body-md text-on-surface-variant">
                     {new Date(selected.updated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </span>
@@ -966,14 +971,14 @@ function OccupationsSection() {
                     className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
                   >
                     <span className="material-symbols-outlined text-[16px]">edit</span>
-                    Edit
+                    {t('common.edit')}
                   </button>
                   <button
                     onClick={() => handleDelete(selected.id)}
                     className="font-poppins text-label-sm text-error hover:text-on-error-container transition-colors duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-2"
                   >
                     <span className="material-symbols-outlined text-[16px]">delete</span>
-                    Delete
+                    {t('common.delete')}
                   </button>
                 </div>
               </div>
@@ -989,7 +994,7 @@ function OccupationsSection() {
           className="lg:hidden font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
         >
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          Back to list
+          {t('common.backToList')}
         </button>
       )}
     </div>

@@ -1,0 +1,155 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "unmapped": "Unmapped",
+    "admin": "Admin",
+    "signOut": "Abmelden",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "creating": "Erstellen...",
+    "saving": "Speichern...",
+    "search": "Suchen...",
+    "clear": "Löschen",
+    "backToList": "Zurück zur Liste"
+  },
+  "footer": {
+    "copyright": "© 2026 UNMAPPED",
+    "terms": "AGB",
+    "privacy": "Datenschutz",
+    "help": "Hilfe"
+  },
+  "auth": {
+    "welcomeBack": "Willkommen zurück",
+    "createAccount": "Konto erstellen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "fullName": "Vollständiger Name",
+    "confirmPassword": "Passwort bestätigen",
+    "newPassword": "Neues Passwort",
+    "signIn": "Anmelden",
+    "signingIn": "Anmelden...",
+    "creatingAccount": "Konto wird erstellt...",
+    "forgotPassword": "Passwort vergessen?",
+    "noAccount": "Noch kein Konto? Registrieren",
+    "hasAccount": "Bereits ein Konto? Anmelden",
+    "resetPassword": "Passwort zurücksetzen",
+    "resetting": "Zurücksetzen...",
+    "sendResetLink": "Link senden",
+    "sending": "Senden...",
+    "resetSent": "Wenn ein Konto mit dieser E-Mail existiert, wurde ein Link zum Zurücksetzen an Ihren Posteingang gesendet.",
+    "backToSignIn": "Zurück zur Anmeldung",
+    "verifyEmail": "E-Mail bestätigen",
+    "verifying": "Ihre E-Mail wird bestätigt...",
+    "verifySuccess": "Ihre E-Mail wurde erfolgreich bestätigt.",
+    "continueToSignIn": "Weiter zur Anmeldung",
+    "verifyExpired": "Dieser Bestätigungslink ist ungültig oder abgelaufen.",
+    "setNewPassword": "Neues Passwort festlegen",
+    "invalidLink": "Ungültiger Link",
+    "resetExpired": "Dieser Link zum Zurücksetzen ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.",
+    "requestNewLink": "Neuen Link anfordern",
+    "resetSuccess": "Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.",
+    "emailPlaceholder": "name@beispiel.de",
+    "passwordPlaceholder": "••••••••",
+    "namePlaceholder": "Max Mustermann"
+  },
+  "dashboard": {
+    "welcome": "Willkommen, {{name}}",
+    "emailVerified": "E-Mail bestätigt",
+    "emailNotVerified": "E-Mail nicht bestätigt"
+  },
+  "admin": {
+    "overview": "Übersicht",
+    "sectors": "Sektoren",
+    "occupations": "Berufe",
+    "stats": {
+      "totalUsers": "Benutzer gesamt",
+      "verifiedUsers": "Bestätigte Benutzer",
+      "sectors": "Sektoren",
+      "occupations": "Berufe"
+    },
+    "users": {
+      "allUsers": "Alle Benutzer",
+      "name": "Name",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "verified": "Bestätigt"
+    },
+    "sector": {
+      "addSector": "Sektor hinzufügen",
+      "title": "Titel",
+      "description": "Beschreibung",
+      "iloSector": "ILO-Sektor",
+      "selectOrAi": "Auswählen oder KI automatisch ausfüllen lassen",
+      "aiSuggest": "KI-Vorschlag",
+      "classifying": "Klassifizierung...",
+      "enterTitleFirst": "Zuerst einen Titel eingeben",
+      "aiSuggestTooltip": "KI den besten ILO-Sektor vorschlagen lassen",
+      "createSector": "Sektor erstellen",
+      "searchSectors": "Sektoren suchen...",
+      "noSectors": "Noch keine Sektoren. Fügen Sie oben Ihren ersten Sektor hinzu.",
+      "noSearchResults": "Keine Sektoren entsprechen Ihrer Suche.",
+      "titlePlaceholder": "z.B. Softwareentwicklung",
+      "descriptionPlaceholder": "Kurzbeschreibung dieses Sektors..."
+    },
+    "occupation": {
+      "addOccupation": "Beruf hinzufügen",
+      "level": "Ebene",
+      "title": "Titel",
+      "titlePlaceholder": "z.B. Softwareentwickler",
+      "definition": "Definition",
+      "definitionPlaceholder": "Beschreiben Sie diesen Beruf...",
+      "occupationGroup": "Berufsgruppe",
+      "selectGroup": "Gruppe auswählen",
+      "selectLevel": "Ebene auswählen",
+      "createOccupation": "Beruf erstellen",
+      "searchOccupations": "Berufe suchen...",
+      "allGroups": "Alle Gruppen",
+      "allLevels": "Alle Ebenen",
+      "notFound": "Keine Berufe gefunden. Fügen Sie oben einen hinzu oder passen Sie Ihre Filter an.",
+      "saveChanges": "Änderungen speichern",
+      "group": "Gruppe",
+      "skillLevel": "Qualifikationsstufe {{level}}",
+      "created": "Erstellt",
+      "updated": "Aktualisiert"
+    },
+    "level": {
+      "1": "Hauptgruppe",
+      "2": "Unterhauptgruppe",
+      "3": "Untergruppe",
+      "4": "Einheit"
+    },
+    "levelOption": {
+      "1": "1 — Hauptgruppe",
+      "2": "2 — Unterhauptgruppe",
+      "3": "3 — Untergruppe",
+      "4": "4 — Einheit"
+    }
+  },
+  "validation": {
+    "atLeast8": "Mindestens 8 Zeichen",
+    "oneUppercase": "Ein Großbuchstabe",
+    "oneLowercase": "Ein Kleinbuchstabe",
+    "oneDigit": "Eine Ziffer",
+    "nameRequired": "Name ist erforderlich",
+    "emailRequired": "E-Mail ist erforderlich",
+    "emailInvalid": "Geben Sie eine gültige E-Mail-Adresse ein",
+    "passwordRequired": "Passwort ist erforderlich",
+    "requires": "Erfordert: ",
+    "confirmPassword": "Bitte bestätigen Sie Ihr Passwort",
+    "passwordsMismatch": "Passwörter stimmen nicht überein"
+  },
+  "api": {
+    "sessionExpired": "Sitzung abgelaufen",
+    "serverError": "Serverfehler ({{status}})",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
+  },
+  "pagination": {
+    "range": "{{from}}–{{to}} von {{total}}"
+  },
+  "select": {
+    "placeholder": "Auswählen...",
+    "search": "Suchen...",
+    "noResults": "Keine Ergebnisse"
+  }
+}

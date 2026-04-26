@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface PaginationProps {
   total: number
@@ -8,6 +9,7 @@ interface PaginationProps {
 }
 
 export default function Pagination({ total, page, perPage, onPageChange }: PaginationProps) {
+  const { t } = useTranslation()
   const totalPages = Math.max(1, Math.ceil(total / perPage))
   const from = (page - 1) * perPage + 1
   const to = Math.min(page * perPage, total)
@@ -31,7 +33,7 @@ export default function Pagination({ total, page, perPage, onPageChange }: Pagin
   return (
     <div className="flex items-center justify-between py-3">
       <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-        {from}–{to} of {total}
+        {t('pagination.range', { from, to, total })}
       </span>
       <div className="flex items-center gap-1">
         <button

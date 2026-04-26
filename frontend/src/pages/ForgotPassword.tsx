@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import AuthLayout from '../components/AuthLayout'
 import InputField from '../components/InputField'
 import Button from '../components/Button'
 import { forgotPassword } from '../api/auth'
 
 export default function ForgotPassword() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -28,17 +30,17 @@ export default function ForgotPassword() {
   }
 
   return (
-    <AuthLayout title="Reset password">
+    <AuthLayout title={t('auth.resetPassword')}>
       {success ? (
         <div className="flex flex-col gap-8">
           <p className="font-poppins text-body-md text-on-surface">
-            If an account with that email exists, a reset link has been sent to your inbox.
+            {t('auth.resetSent')}
           </p>
           <Link
             className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 border-b border-transparent hover:border-primary pb-0.5 text-center"
             to="/"
           >
-            Back to Sign In
+            {t('auth.backToSignIn')}
           </Link>
         </div>
       ) : (
@@ -47,24 +49,24 @@ export default function ForgotPassword() {
             <p className="font-poppins text-label-sm text-error">{error}</p>
           )}
           <InputField
-            label="Email"
+            label={t('auth.email')}
             id="email"
             type="email"
-            placeholder="name@example.com"
+            placeholder={t('auth.emailPlaceholder')}
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
           />
           <div className="flex flex-col gap-4 mt-4">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Sending...' : 'Send Reset Link'}
+              {isSubmitting ? t('auth.sending') : t('auth.sendResetLink')}
             </Button>
             <div className="text-center">
               <Link
                 className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 border-b border-transparent hover:border-primary pb-0.5"
                 to="/"
               >
-                Back to Sign In
+                {t('auth.backToSignIn')}
               </Link>
             </div>
           </div>

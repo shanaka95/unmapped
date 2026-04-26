@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface SearchBarProps {
   id: string
@@ -7,7 +8,8 @@ interface SearchBarProps {
   placeholder?: string
 }
 
-export default function SearchBar({ id, value, onChange, placeholder = 'Search...' }: SearchBarProps) {
+export default function SearchBar({ id, value, onChange, placeholder }: SearchBarProps) {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export default function SearchBar({ id, value, onChange, placeholder = 'Search..
         type="text"
         value={value}
         onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('common.search')}
         className="w-full bg-transparent border-0 border-b border-outline-variant pl-7 pr-7 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline font-poppins text-body-md"
       />
       {value && (

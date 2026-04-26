@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface SelectFieldProps {
   label?: string
@@ -11,6 +12,7 @@ interface SelectFieldProps {
 }
 
 export default function SelectField({ label, id, options, placeholder, error, value, onChange }: SelectFieldProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const ref = useRef<HTMLDivElement>(null)
@@ -68,7 +70,7 @@ export default function SelectField({ label, id, options, placeholder, error, va
           }`}
         >
           <span className={`truncate min-w-0 ${selected ? 'text-on-surface' : 'text-outline'}`}>
-            {selected ? selected.label : placeholder || 'Select...'}
+            {selected ? selected.label : placeholder ?? t('select.placeholder')}
           </span>
           <span className={`material-symbols-outlined text-on-surface-variant text-[20px] transition-transform duration-300 ${open ? 'rotate-180' : ''}`}>
             expand_more
@@ -81,7 +83,7 @@ export default function SelectField({ label, id, options, placeholder, error, va
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="Search..."
+                placeholder={t('select.search')}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full bg-transparent border-0 px-0 py-1 text-body-md text-on-surface focus:ring-0 focus:outline-none placeholder:text-outline font-poppins"
@@ -90,7 +92,7 @@ export default function SelectField({ label, id, options, placeholder, error, va
             <ul ref={listRef} className="max-h-56 overflow-y-auto py-1">
               {filtered.length === 0 ? (
                 <li className="px-4 py-3 text-on-surface-variant font-poppins text-body-md">
-                  No results
+                  {t('select.noResults')}
                 </li>
               ) : (
                 filtered.map(opt => (
