@@ -5,11 +5,15 @@ import {
   listSectors, createSector, deleteSector, listIloSectors, classifySector,
   type Sector, type IloSector,
 } from '../api/sectors'
+import {
+  listOccupations, createOccupation, deleteOccupation, listOccupationGroups,
+  type Occupation, type OccupationGroup,
+} from '../api/occupations'
 import InputField from '../components/InputField'
 import SelectField from '../components/SelectField'
 import Footer from '../components/Footer'
 
-type Section = 'overview' | 'sectors'
+type Section = 'overview' | 'sectors' | 'occupations'
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth()
@@ -37,50 +41,36 @@ export default function AdminDashboard() {
       <div className="flex flex-grow">
         {/* Left sidebar */}
         <nav className="hidden sm:flex flex-col w-56 border-r border-outline-variant px-4 py-6 gap-unit flex-shrink-0">
-          <button
-            onClick={() => setSection('overview')}
-            className={`text-left px-4 py-3 rounded-xl font-poppins text-label-sm uppercase tracking-wider transition-colors duration-300 cursor-pointer ${
-              section === 'overview'
-                ? 'bg-primary text-on-primary'
-                : 'text-on-surface-variant hover:bg-surface-container'
-            }`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setSection('sectors')}
-            className={`text-left px-4 py-3 rounded-xl font-poppins text-label-sm uppercase tracking-wider transition-colors duration-300 cursor-pointer ${
-              section === 'sectors'
-                ? 'bg-primary text-on-primary'
-                : 'text-on-surface-variant hover:bg-surface-container'
-            }`}
-          >
-            Sectors
-          </button>
+          {(['overview', 'sectors', 'occupations'] as const).map(s => (
+            <button
+              key={s}
+              onClick={() => setSection(s)}
+              className={`text-left px-4 py-3 rounded-xl font-poppins text-label-sm uppercase tracking-wider transition-colors duration-300 cursor-pointer ${
+                section === s
+                  ? 'bg-primary text-on-primary'
+                  : 'text-on-surface-variant hover:bg-surface-container'
+              }`}
+            >
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
         </nav>
 
         {/* Mobile nav */}
         <div className="sm:hidden flex border-b border-outline-variant w-full">
-          <button
-            onClick={() => setSection('overview')}
-            className={`flex-1 py-3 font-poppins text-label-sm uppercase tracking-wider text-center transition-colors duration-300 cursor-pointer ${
-              section === 'overview'
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-on-surface-variant'
-            }`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setSection('sectors')}
-            className={`flex-1 py-3 font-poppins text-label-sm uppercase tracking-wider text-center transition-colors duration-300 cursor-pointer ${
-              section === 'sectors'
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-on-surface-variant'
-            }`}
-          >
-            Sectors
-          </button>
+          {(['overview', 'sectors', 'occupations'] as const).map(s => (
+            <button
+              key={s}
+              onClick={() => setSection(s)}
+              className={`flex-1 py-3 font-poppins text-label-sm uppercase tracking-wider text-center transition-colors duration-300 cursor-pointer ${
+                section === s
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-on-surface-variant'
+              }`}
+            >
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
         </div>
 
         {/* Main content */}
@@ -88,6 +78,7 @@ export default function AdminDashboard() {
           <div className="max-w-container-max mx-auto">
             {section === 'overview' && <OverviewSection user={user} />}
             {section === 'sectors' && <SectorsSection />}
+            {section === 'occupations' && <OccupationsSection />}
           </div>
         </main>
       </div>
@@ -417,6 +408,293 @@ function SectorsSection() {
                   <td className="px-6 py-4">
                     <button
                       onClick={() => handleDelete(s.id)}
+                      className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function OccupationsSection() {
+  const [occupations, setOccupations] = useState<Occupation[]>([])
+  const [groups, setGroups] = useState<OccupationGroup[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Filters
+  const [filterGroupId, setFilterGroupId] = useState('')
+  const [filterLevel, setFilterLevel] = useState('')
+
+  // Form state
+  const [code, setCode] = useState('')
+  const [title, setTitle] = useState('')
+  const [definition, setDefinition] = useState('')
+  const [level, setLevel] = useState('')
+  const [groupId, setGroupId] = useState('')
+
+  async function loadData() {
+    const [occRes, groupsRes] = await Promise.all([listOccupations(), listOccupationGroups()])
+    if (occRes.data) setOccupations(occRes.data)
+    if (groupsRes.data) setGroups(groupsRes.data)
+    setLoading(false)
+  }
+
+  useEffect(() => { loadData() }, [])
+
+  async function handleFilterLoad() {
+    const params: { group_id?: number; level?: number } = {}
+    if (filterGroupId) params.group_id = parseInt(filterGroupId)
+    if (filterLevel) params.level = parseInt(filterLevel)
+    const res = await listOccupations(params)
+    if (res.data) setOccupations(res.data)
+  }
+
+  useEffect(() => { handleFilterLoad() }, [filterGroupId, filterLevel])
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setFormError('')
+
+    if (!code.trim()) { setFormError('Code is required'); return }
+    if (!title.trim()) { setFormError('Title is required'); return }
+    if (!level) { setFormError('Level is required'); return }
+    if (!groupId) { setFormError('Please select an occupation group'); return }
+
+    setIsSubmitting(true)
+    const result = await createOccupation({
+      code: code.trim(),
+      title: title.trim(),
+      definition: definition.trim() || null,
+      level: parseInt(level),
+      group_id: parseInt(groupId),
+    })
+
+    if (result.data) {
+      setCode('')
+      setTitle('')
+      setDefinition('')
+      setLevel('')
+      setGroupId('')
+      setShowForm(false)
+      await loadData()
+    } else {
+      setFormError(result.error || 'Failed to create occupation')
+    }
+    setIsSubmitting(false)
+  }
+
+  async function handleDelete(id: number) {
+    const result = await deleteOccupation(id)
+    if (result.status === 204 || result.data !== undefined) {
+      await loadData()
+    }
+  }
+
+  const groupOptions = groups.map(g => ({
+    value: String(g.id),
+    label: `${g.code} — ${g.name}`,
+  }))
+
+  const levelOptions = [
+    { value: '1', label: '1 — Major' },
+    { value: '2', label: '2 — Sub-Major' },
+    { value: '3', label: '3 — Minor' },
+    { value: '4', label: '4 — Unit' },
+  ]
+
+  const filtered = occupations
+
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-poppins text-h1 text-on-surface">Occupations</h2>
+          <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+            {filtered.length} records
+          </span>
+        </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
+        >
+          <span className="material-symbols-outlined text-[18px]">{showForm ? 'close' : 'add'}</span>
+          {showForm ? 'Cancel' : 'Add Occupation'}
+        </button>
+      </div>
+
+      {/* Add form */}
+      {showForm && (
+        <form
+          onSubmit={handleSubmit}
+          className="border border-outline-variant rounded-xl p-6 flex flex-col gap-6 bg-surface-container-lowest"
+        >
+          {formError && (
+            <p className="font-poppins text-label-sm text-error">{formError}</p>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <InputField
+              label="Code"
+              id="occ-code"
+              placeholder="e.g. 1111"
+              value={code}
+              onChange={e => setCode(e.target.value)}
+              required
+            />
+            <SelectField
+              label="Level"
+              id="occ-level"
+              options={levelOptions}
+              placeholder="Select level"
+              value={level}
+              onChange={setLevel}
+            />
+          </div>
+          <InputField
+            label="Title"
+            id="occ-title"
+            placeholder="e.g. Software Developer"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+          />
+          <div className="flex flex-col gap-unit">
+            <label
+              className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+              htmlFor="occ-definition"
+            >
+              Definition
+            </label>
+            <textarea
+              id="occ-definition"
+              placeholder="Describe this occupation..."
+              value={definition}
+              onChange={e => setDefinition(e.target.value)}
+              rows={3}
+              className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+            />
+          </div>
+          <SelectField
+            label="Occupation Group"
+            id="occ-group"
+            options={groupOptions}
+            placeholder="Select group"
+            value={groupId}
+            onChange={setGroupId}
+          />
+          {groupId && (
+            <div className="flex items-center gap-unit">
+              <span className="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+              <span className="font-poppins text-label-sm text-primary">
+                {groups.find(g => String(g.id) === groupId)?.name}
+              </span>
+            </div>
+          )}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="self-start font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
+          >
+            {isSubmitting ? 'Creating...' : 'Create Occupation'}
+          </button>
+        </form>
+      )}
+
+      {/* Filters */}
+      {!loading && (
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="w-56">
+            <SelectField
+              label="Filter by Group"
+              id="filter-group"
+              options={groupOptions}
+              placeholder="All groups"
+              value={filterGroupId}
+              onChange={val => setFilterGroupId(val)}
+            />
+          </div>
+          <div className="w-48">
+            <SelectField
+              label="Filter by Level"
+              id="filter-level"
+              options={levelOptions}
+              placeholder="All levels"
+              value={filterLevel}
+              onChange={val => setFilterLevel(val)}
+            />
+          </div>
+          {(filterGroupId || filterLevel) && (
+            <button
+              onClick={() => { setFilterGroupId(''); setFilterLevel('') }}
+              className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
+            >
+              <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
+              Clear
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Table */}
+      {loading ? (
+        <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+          Loading...
+        </span>
+      ) : filtered.length === 0 ? (
+        <div className="border border-outline-variant rounded-xl p-12 text-center">
+          <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">work</span>
+          <p className="font-poppins text-body-md text-on-surface-variant">
+            No occupations found. Add one above or adjust your filters.
+          </p>
+        </div>
+      ) : (
+        <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-outline-variant bg-surface-container-low">
+                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                  Code
+                </th>
+                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                  Title
+                </th>
+                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                  Level
+                </th>
+                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                  Group
+                </th>
+                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(o => (
+                <tr key={o.id} className="border-b border-outline-variant last:border-b-0 hover:bg-surface-container-low transition-colors duration-300 group">
+                  <td className="px-6 py-4">
+                    <span className="font-poppins text-label-sm bg-surface-container text-on-surface-variant px-2 py-1 rounded-default">
+                      {o.code}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 font-medium">{o.title}</td>
+                  <td className="px-6 py-4 text-on-surface-variant">L{o.level}</td>
+                  <td className="px-6 py-4">
+                    <span className="font-poppins text-label-sm text-on-surface-variant">
+                      {o.group.name}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => handleDelete(o.id)}
                       className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
                     >
                       Delete
