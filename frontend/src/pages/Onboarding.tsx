@@ -176,7 +176,7 @@ export default function Onboarding() {
       current_step: 7,
     })
     if (res.data) {
-      navigate('/dashboard', { replace: true })
+      navigate('/career-assistant', { replace: true })
     } else {
       setError(res.error || 'Failed to complete profile')
     }

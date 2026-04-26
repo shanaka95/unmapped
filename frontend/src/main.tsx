@@ -17,6 +17,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 const SettlementMap = lazy(() => import('./pages/SettlementMap'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
+const CareerAssistant = lazy(() => import('./pages/CareerAssistant'))
 
 function LoadingFallback() {
   const { t } = useTranslation()
@@ -53,6 +54,14 @@ createRoot(document.getElementById('root')!).render(
               element={
                 <ProtectedRoute>
                   <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/career-assistant"
+              element={
+                <ProtectedRoute>
+                  <CareerAssistant />
                 </ProtectedRoute>
               }
             />

@@ -197,5 +197,11 @@
     "selfTaughtSkills": "Self-Taught Skills",
     "selfTaughtSkillsSubtitle": "Anything you taught yourself that you are proud of",
     "selfTaughtSkillsPlaceholder": "e.g. Self-taught programming from YouTube..."
+  },
+  "careerAssistant": {
+    "greeting": "Hallo, ich bin Orin",
+    "intro": "Ich bin hier, um dir zu helfen, den besten Weg für deine Karriere zu finden — passend zu dem, was du gut kannst und was du liebst.",
+    "cta": "Lass uns über den Beruf sprechen, der am besten zu dir passt.",
+    "button": "Los geht's"
   }
 }

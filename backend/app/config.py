@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     cloudflare_account_id: str
     cloudflare_auth_token: str
 
+    openrouter_api_key: str = ""
+    embedding_model: str = "qwen/qwen3-embedding-8b"
+
     model_config = {"env_prefix": "UNMAPPED_", "env_file": ".env"}
 
 
