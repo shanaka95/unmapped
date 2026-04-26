@@ -120,80 +120,82 @@ export default function LaborMarketSignals({
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Employment Outlook */}
-          <section className="bg-surface-container p-6 rounded-xl">
-            <h3 className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider mb-3">
-              {t('laborMarket.employmentOutlook')}
-            </h3>
-            <div className="flex items-baseline gap-3">
-              <span className="font-poppins text-h1 text-on-surface">
-                {signals.employment_outlook.current_rate !== null
-                  ? `${signals.employment_outlook.current_rate.toFixed(1)}%`
-                  : '—'}
-              </span>
-              <span
-                className={`font-poppins text-h2 ${getTrendColor(signals.employment_outlook.trend)}`}
-              >
-                {getTrendIcon(signals.employment_outlook.trend)}
-              </span>
-            </div>
-            {signals.employment_outlook.trend_years.length > 0 && (
-              <p className="font-poppins text-label-sm text-on-surface-variant mt-1">
-                {signals.employment_outlook.trend_years.join(', ')}
-              </p>
-            )}
-            {signals.employment_outlook.citation && (
-              <CitationBlock
-                citation={signals.employment_outlook.citation}
-                isExpanded={expandedCitation === 'employment'}
-                onToggle={() =>
-                  setExpandedCitation(
-                    expandedCitation === 'employment' ? null : 'employment'
-                  )
-                }
-              />
-            )}
-          </section>
+          {signals.employment_outlook.current_rate !== null && (
+            <section className="bg-surface-container p-6 rounded-xl">
+              <h3 className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider mb-3">
+                {t('laborMarket.employmentOutlook')}
+              </h3>
+              <div className="flex items-baseline gap-3">
+                <span className="font-poppins text-h1 text-on-surface">
+                  {signals.employment_outlook.current_rate.toFixed(1)}%
+                </span>
+                <span
+                  className={`font-poppins text-h2 ${getTrendColor(signals.employment_outlook.trend)}`}
+                >
+                  {getTrendIcon(signals.employment_outlook.trend)}
+                </span>
+              </div>
+              {signals.employment_outlook.trend_years.length > 0 && (
+                <p className="font-poppins text-label-sm text-on-surface-variant mt-1">
+                  {signals.employment_outlook.trend_years.join(', ')}
+                </p>
+              )}
+              {signals.employment_outlook.citation && (
+                <CitationBlock
+                  citation={signals.employment_outlook.citation}
+                  isExpanded={expandedCitation === 'employment'}
+                  onToggle={() =>
+                    setExpandedCitation(
+                      expandedCitation === 'employment' ? null : 'employment'
+                    )
+                  }
+                />
+              )}
+            </section>
+          )}
 
           {/* Gender Gap */}
-          <section className="bg-surface-container p-6 rounded-xl">
-            <h3 className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider mb-3">
-              {t('laborMarket.genderGap')}
-            </h3>
-            <div className="flex gap-8">
-              <div>
-                <p className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-                  {t('gender.male')}
-                </p>
-                <p className="font-poppins text-h2 text-on-surface mt-1">
-                  {signals.gender_gap.male_rate !== null
-                    ? `${signals.gender_gap.male_rate.toFixed(1)}%`
-                    : '—'}
-                </p>
+          {(signals.gender_gap.male_rate !== null || signals.gender_gap.female_rate !== null) && (
+            <section className="bg-surface-container p-6 rounded-xl">
+              <h3 className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider mb-3">
+                {t('laborMarket.genderGap')}
+              </h3>
+              <div className="flex gap-8">
+                <div>
+                  <p className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                    {t('gender.male')}
+                  </p>
+                  <p className="font-poppins text-h2 text-on-surface mt-1">
+                    {signals.gender_gap.male_rate !== null
+                      ? `${signals.gender_gap.male_rate.toFixed(1)}%`
+                      : '—'}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+                    {t('gender.female')}
+                  </p>
+                  <p className="font-poppins text-h2 text-on-surface mt-1">
+                    {signals.gender_gap.female_rate !== null
+                      ? `${signals.gender_gap.female_rate.toFixed(1)}%`
+                      : '—'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-                  {t('gender.female')}
-                </p>
-                <p className="font-poppins text-h2 text-on-surface mt-1">
-                  {signals.gender_gap.female_rate !== null
-                    ? `${signals.gender_gap.female_rate.toFixed(1)}%`
-                    : '—'}
-                </p>
-              </div>
-            </div>
-            <p className="font-poppins text-body-md text-on-surface mt-3">
-              {signals.gender_gap.gap_analysis}
-            </p>
-            {signals.gender_gap.citation && (
-              <CitationBlock
-                citation={signals.gender_gap.citation}
-                isExpanded={expandedCitation === 'gender'}
-                onToggle={() =>
-                  setExpandedCitation(expandedCitation === 'gender' ? null : 'gender')
-                }
-              />
-            )}
-          </section>
+              <p className="font-poppins text-body-md text-on-surface mt-3">
+                {signals.gender_gap.gap_analysis}
+              </p>
+              {signals.gender_gap.citation && (
+                <CitationBlock
+                  citation={signals.gender_gap.citation}
+                  isExpanded={expandedCitation === 'gender'}
+                  onToggle={() =>
+                    setExpandedCitation(expandedCitation === 'gender' ? null : 'gender')
+                  }
+                />
+              )}
+            </section>
+          )}
 
           {/* Regional Comparison */}
           {signals.regional_comparison.length > 0 && (
