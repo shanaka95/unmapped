@@ -268,6 +268,11 @@ function SectorsSection() {
       )
     : sectors
 
+  const PER_PAGE = 20
+  const totalPages = Math.max(1, Math.ceil(filteredSectors.length / PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const pagedSectors = filteredSectors.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE)
+
   async function handleAiClassify() {
     if (!canClassify) return
     setIsClassifying(true)
@@ -379,7 +384,7 @@ function SectorsSection() {
         <SearchBar
           id="sectors-search"
           value={search}
-          onChange={setSearch}
+          onChange={v => { setSearch(v); setPage(1) }}
           placeholder="Search sectors..."
         />
       )}
@@ -395,48 +400,58 @@ function SectorsSection() {
           </p>
         </div>
       ) : (
-        <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-outline-variant bg-surface-container-low">
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Title
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Description
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  ILO Sector
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSectors.map(s => (
-                <tr key={s.id} className="border-b border-outline-variant last:border-b-0 hover:bg-surface-container-low transition-colors duration-300 group">
-                  <td className="px-6 py-4 font-medium">{s.title}</td>
-                  <td className="px-6 py-4 text-on-surface-variant max-w-xs truncate">
-                    {s.description || '—'}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-poppins text-label-sm bg-surface-container text-on-surface-variant px-3 py-1 rounded-default">
-                      {s.ilo_sector.name}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleDelete(s.id)}
-                      className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
-                    >
-                      Delete
-                    </button>
-                  </td>
+        <>
+          <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-outline-variant bg-surface-container-low">
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                    Title
+                  </th>
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                    Description
+                  </th>
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                    ILO Sector
+                  </th>
+                  <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {pagedSectors.map(s => (
+                  <tr key={s.id} className="border-b border-outline-variant last:border-b-0 hover:bg-surface-container-low transition-colors duration-300 group">
+                    <td className="px-6 py-4 font-medium">{s.title}</td>
+                    <td className="px-6 py-4 text-on-surface-variant max-w-xs truncate">
+                      {s.description || '—'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="font-poppins text-label-sm bg-surface-container text-on-surface-variant px-3 py-1 rounded-default">
+                        {s.ilo_sector.name}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => handleDelete(s.id)}
+                        className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {filteredSectors.length > PER_PAGE && (
+            <Pagination
+              total={filteredSectors.length}
+              page={safePage}
+              perPage={PER_PAGE}
+              onPageChange={setPage}
+            />
+          )}
+        </>
       )}
     </div>
   )
@@ -466,6 +481,7 @@ function OccupationsSection() {
   const [filterGroupId, setFilterGroupId] = useState('')
   const [filterLevel, setFilterLevel] = useState('')
   const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
 
   // Add form state
   const [title, setTitle] = useState('')
@@ -611,15 +627,15 @@ function OccupationsSection() {
       )
     : occupations
 
+  const PER_PAGE = 20
+  const occTotalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const safeOccPage = Math.min(page, occTotalPages)
+  const paged = filtered.slice((safeOccPage - 1) * PER_PAGE, safeOccPage * PER_PAGE)
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <h2 className="font-poppins text-h1 text-on-surface">Occupations</h2>
-          <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-            {filtered.length} records
-          </span>
-        </div>
+        <h2 className="font-poppins text-h1 text-on-surface">Occupations</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
@@ -698,44 +714,42 @@ function OccupationsSection() {
 
       {/* Search + Filters */}
       {!loading && (
-        <div className="flex flex-col gap-4">
-          <SearchBar
-            id="occ-search"
-            value={search}
-            onChange={setSearch}
-            placeholder="Search occupations..."
-          />
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="w-56">
-              <SelectField
-                label="Filter by Group"
-                id="filter-group"
-                options={groupOptions}
-                placeholder="All groups"
-                value={filterGroupId}
-                onChange={val => setFilterGroupId(val)}
-              />
-            </div>
-            <div className="w-48">
-              <SelectField
-                label="Filter by Level"
-                id="filter-level"
-                options={levelOptions}
-                placeholder="All levels"
-                value={filterLevel}
-                onChange={val => setFilterLevel(val)}
-              />
-            </div>
-            {(search || filterGroupId || filterLevel) && (
-              <button
-                onClick={() => { setSearch(''); setFilterGroupId(''); setFilterLevel('') }}
-                className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
-              >
-                <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
-                Clear
-              </button>
-            )}
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex-grow min-w-[200px]">
+            <SearchBar
+              id="occ-search"
+              value={search}
+              onChange={v => { setSearch(v); setPage(1) }}
+              placeholder="Search occupations..."
+            />
           </div>
+          <div className="w-56">
+            <SelectField
+              id="filter-group"
+              options={groupOptions}
+              placeholder="All groups"
+              value={filterGroupId}
+              onChange={val => { setFilterGroupId(val); setPage(1) }}
+            />
+          </div>
+          <div className="w-48">
+            <SelectField
+              id="filter-level"
+              options={levelOptions}
+              placeholder="All levels"
+              value={filterLevel}
+              onChange={val => { setFilterLevel(val); setPage(1) }}
+            />
+          </div>
+          {(search || filterGroupId || filterLevel) && (
+            <button
+              onClick={() => { setSearch(''); setFilterGroupId(''); setFilterLevel(''); setPage(1) }}
+              className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
+            >
+              <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
+              Clear
+            </button>
+          )}
         </div>
       )}
 
@@ -755,53 +769,63 @@ function OccupationsSection() {
               </p>
             </div>
           ) : (
-            <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-outline-variant bg-surface-container-low">
-                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                      Title
-                    </th>
-                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                      Level
-                    </th>
-                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                      Group
-                    </th>
-                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map(o => (
-                    <tr
-                      key={o.id}
-                      onClick={() => openDetail(o)}
-                      className={`border-b border-outline-variant last:border-b-0 transition-colors duration-300 group cursor-pointer ${
-                        selected?.id === o.id
-                          ? 'bg-surface-container-low'
-                          : 'hover:bg-surface-container-low'
-                      }`}
-                    >
-                      <td className="px-6 py-4 font-medium">{o.title}</td>
-                      <td className="px-6 py-4 text-on-surface-variant">L{o.level}</td>
-                      <td className="px-6 py-4">
-                        <span className="font-poppins text-label-sm text-on-surface-variant">
-                          {o.group.name}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={e => { e.stopPropagation(); handleDelete(o.id) }}
-                          className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
-                        >
-                          Delete
-                        </button>
-                      </td>
+            <div className="flex flex-col">
+              <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-outline-variant bg-surface-container-low">
+                      <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                        Title
+                      </th>
+                      <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                        Level
+                      </th>
+                      <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                        Group
+                      </th>
+                      <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {paged.map(o => (
+                      <tr
+                        key={o.id}
+                        onClick={() => openDetail(o)}
+                        className={`border-b border-outline-variant last:border-b-0 transition-colors duration-300 group cursor-pointer ${
+                          selected?.id === o.id
+                            ? 'bg-surface-container-low'
+                            : 'hover:bg-surface-container-low'
+                        }`}
+                      >
+                        <td className="px-6 py-4 font-medium">{o.title}</td>
+                        <td className="px-6 py-4 text-on-surface-variant">L{o.level}</td>
+                        <td className="px-6 py-4">
+                          <span className="font-poppins text-label-sm text-on-surface-variant">
+                            {o.group.name}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            onClick={e => { e.stopPropagation(); handleDelete(o.id) }}
+                            className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {filtered.length > PER_PAGE && (
+                <Pagination
+                  total={filtered.length}
+                  page={safeOccPage}
+                  perPage={PER_PAGE}
+                  onPageChange={setPage}
+                />
+              )}
             </div>
           )}
         </div>
