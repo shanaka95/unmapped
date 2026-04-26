@@ -88,19 +88,39 @@ def generate_signals(user_id: int, isco_code: str) -> dict[str, Any]:
     """
     db = SessionLocal()
     try:
-        # Get user profile
-        profile = db.execute(
-            select(UserProfile).where(UserProfile.user_id == user_id)
-        ).scalar_one_or_none()
+        # Get user profile — use query().first() to avoid scalar_one_or_none + eager load conflict
+        profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
 
         if not profile:
-            raise ValueError("User profile not found")
+            return {
+                "occupation": {"isco_code": isco_code, "title": isco_code, "isco_group": "", "country": "Unknown", "sex_label": "Total"},
+                "signals": {
+                    "employment_outlook": {"current_rate": None, "trend": "insufficient_data", "trend_years": [], "citation": ""},
+                    "regional_comparison": [],
+                    "migration_recommendation": {"should_relocate": False, "target_areas": [], "reasoning": "Profile not found. Please complete your onboarding.", "citations": []},
+                    "gender_gap": {"male_rate": None, "female_rate": None, "gap_analysis": "No profile data available.", "citation": ""},
+                    "underemployment": {"rate": None, "citation": ""},
+                    "working_time": {"avg_hours": None, "citation": ""},
+                },
+                "error": "profile_not_found",
+            }
 
         country = profile.country
         gender = profile.gender
 
         if not country:
-            raise ValueError("User country not set in profile")
+            return {
+                "occupation": {"isco_code": isco_code, "title": isco_code, "isco_group": "", "country": "Not set", "sex_label": "Total"},
+                "signals": {
+                    "employment_outlook": {"current_rate": None, "trend": "insufficient_data", "trend_years": [], "citation": ""},
+                    "regional_comparison": [],
+                    "migration_recommendation": {"should_relocate": False, "target_areas": [], "reasoning": "Country not set in profile. Please update your location in onboarding.", "citations": []},
+                    "gender_gap": {"male_rate": None, "female_rate": None, "gap_analysis": "No country data available.", "citation": ""},
+                    "underemployment": {"rate": None, "citation": ""},
+                    "working_time": {"avg_hours": None, "citation": ""},
+                },
+                "error": "country_not_set",
+            }
 
         # Map gender to ILO sex label
         sex_map = {"male": "Male", "female": "Female", "other": "Total"}
@@ -288,13 +308,16 @@ def generate_automation_risk(
     """
     db = SessionLocal()
     try:
-        # Get user profile
-        profile = db.execute(
-            select(UserProfile).where(UserProfile.user_id == user_id)
-        ).scalar_one_or_none()
+        # Get user profile — use query().first() to avoid scalar_one_or_none + eager load conflict
+        profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
 
         if not profile:
-            raise ValueError("User profile not found")
+            return {
+                "selected": {"isco_code": selected_code, "title": selected_title, "risk_score": None, "sd": None, "gradient": None, "risk_label": "unknown", "analysis": "Profile not found."},
+                "all_occupations": [],
+                "summary": "Could not generate analysis: user profile not found.",
+                "error": "profile_not_found",
+            }
 
         # Build all codes to fetch
         all_codes = [selected_code] + [r["isco_code"] for r in recommendations if r.get("isco_code")]
