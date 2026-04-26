@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 import { getAdminStats, getAdminUsers, type AdminStats, type User } from '../api/auth'
 import {
@@ -79,13 +78,6 @@ export default function AdminDashboard() {
               {t(SECTION_KEYS[s])}
             </button>
           ))}
-          <Link
-            to="/admin/settlements"
-            className="text-left px-4 py-3 rounded-xl font-poppins text-label-sm uppercase tracking-wider transition-colors duration-300 text-on-surface-variant hover:bg-surface-container flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[18px]">map</span>
-            {t('admin.settlements')}
-          </Link>
         </nav>
 
         {/* Mobile nav */}
@@ -103,13 +95,6 @@ export default function AdminDashboard() {
               {t(SECTION_KEYS[s])}
             </button>
           ))}
-          <Link
-            to="/admin/settlements"
-            className="flex-1 py-3 font-poppins text-label-sm uppercase tracking-wider text-center text-on-surface-variant hover:text-primary transition-colors duration-300 flex items-center justify-center gap-1"
-          >
-            <span className="material-symbols-outlined text-[16px]">map</span>
-            {t('admin.settlements')}
-          </Link>
         </div>
 
         {/* Main content */}
@@ -301,7 +286,7 @@ function SectorsSection() {
       setShowForm(false)
       await loadData()
     } else {
-      setFormError(result.error || 'Failed to create sector')
+      setFormError(result.error || t('api.failedToCreateSector'))
     }
     setIsSubmitting(false)
   }
@@ -338,7 +323,7 @@ function SectorsSection() {
     if (result.data) {
       setIloSectorId(String(result.data.ilo_sector_id))
     } else {
-      setFormError(result.error || 'AI classification failed. Please select manually.')
+      setFormError(result.error || t('admin.sector.aiFailed'))
     }
     setIsClassifying(false)
   }
@@ -631,7 +616,7 @@ function OccupationsSection() {
       setIsEditing(false)
       await loadData()
     } else {
-      setEditError(result.error || 'Failed to update occupation')
+      setEditError(result.error || t('api.failedToUpdateOccupation'))
     }
     setIsSaving(false)
   }
@@ -668,7 +653,7 @@ function OccupationsSection() {
       setShowForm(false)
       await loadData()
     } else {
-      setFormError(result.error || 'Failed to create occupation')
+      setFormError(result.error || t('api.failedToCreateOccupation'))
     }
     setIsSubmitting(false)
   }
@@ -766,11 +751,11 @@ function OccupationsSection() {
               className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
               htmlFor="occ-tasks"
             >
-              Tasks Include
+              {t('admin.occupation.tasksInclude')}
             </label>
             <textarea
               id="occ-tasks"
-              placeholder="Describe tasks performed..."
+              placeholder={t('admin.occupation.tasksIncludePlaceholder')}
               value={tasksInclude}
               onChange={e => setTasksInclude(e.target.value)}
               rows={3}
@@ -782,11 +767,11 @@ function OccupationsSection() {
               className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
               htmlFor="occ-included"
             >
-              Included Occupations
+              {t('admin.occupation.includedOccupations')}
             </label>
             <textarea
               id="occ-included"
-              placeholder="Examples of occupations included..."
+              placeholder={t('admin.occupation.includedOccupationsPlaceholder')}
               value={includedOccupations}
               onChange={e => setIncludedOccupations(e.target.value)}
               rows={2}
@@ -798,11 +783,11 @@ function OccupationsSection() {
               className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
               htmlFor="occ-excluded"
             >
-              Excluded Occupations
+              {t('admin.occupation.excludedOccupations')}
             </label>
             <textarea
               id="occ-excluded"
-              placeholder="Examples of occupations excluded..."
+              placeholder={t('admin.occupation.excludedOccupationsPlaceholder')}
               value={excludedOccupations}
               onChange={e => setExcludedOccupations(e.target.value)}
               rows={2}
@@ -814,11 +799,11 @@ function OccupationsSection() {
               className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
               htmlFor="occ-notes"
             >
-              Notes
+              {t('admin.occupation.notes')}
             </label>
             <textarea
               id="occ-notes"
-              placeholder="Additional notes..."
+              placeholder={t('admin.occupation.notesPlaceholder')}
               value={notes}
               onChange={e => setNotes(e.target.value)}
               rows={2}
@@ -1026,7 +1011,7 @@ function OccupationsSection() {
                     className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
                     htmlFor="edit-tasks"
                   >
-                    Tasks Include
+                    {t('admin.occupation.tasksInclude')}
                   </label>
                   <textarea
                     id="edit-tasks"
@@ -1041,7 +1026,7 @@ function OccupationsSection() {
                     className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
                     htmlFor="edit-included"
                   >
-                    Included Occupations
+                    {t('admin.occupation.includedOccupations')}
                   </label>
                   <textarea
                     id="edit-included"
@@ -1056,7 +1041,7 @@ function OccupationsSection() {
                     className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
                     htmlFor="edit-excluded"
                   >
-                    Excluded Occupations
+                    {t('admin.occupation.excludedOccupations')}
                   </label>
                   <textarea
                     id="edit-excluded"
@@ -1071,7 +1056,7 @@ function OccupationsSection() {
                     className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
                     htmlFor="edit-notes"
                   >
-                    Notes
+                    {t('admin.occupation.notes')}
                   </label>
                   <textarea
                     id="edit-notes"
@@ -1239,8 +1224,8 @@ function EducationSection() {
     e.preventDefault()
     setFormError('')
 
-    if (!name.trim()) { setFormError('Name is required'); return }
-    if (!iscedLevelId) { setFormError('Please select an ISCED level'); return }
+    if (!name.trim()) { setFormError(t('validation.nameRequired')); return }
+    if (!iscedLevelId) { setFormError(t('admin.education.selectIscedLevelRequired')); return }
 
     setIsSubmitting(true)
     const result = await createEducationLevel({

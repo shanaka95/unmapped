@@ -15,9 +15,9 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
-const SettlementMap = lazy(() => import('./pages/SettlementMap'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 const CareerAssistant = lazy(() => import('./pages/CareerAssistant'))
+const ProfessionMatch = lazy(() => import('./pages/ProfessionMatch'))
 
 function LoadingFallback() {
   const { t } = useTranslation()
@@ -66,18 +66,18 @@ createRoot(document.getElementById('root')!).render(
               }
             />
             <Route
+              path="/profession-match"
+              element={
+                <ProtectedRoute>
+                  <ProfessionMatch />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/admin"
               element={
                 <AdminRoute>
                   <AdminDashboard />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="/admin/settlements"
-              element={
-                <AdminRoute>
-                  <SettlementMap />
                 </AdminRoute>
               }
             />

@@ -101,6 +101,8 @@ export default function Onboarding() {
         setLongitude(p.longitude)
         setSettlementType(p.settlement_type)
         setEducationLevelId(p.education_level_id)
+        setInformalWork(p.informal_work ?? '')
+        setSelfTaughtSkills(p.self_taught_skills ?? '')
         setSelectedLangIds(p.language_ids ?? [])
       }
       if (countriesRes.data) {
@@ -124,7 +126,7 @@ export default function Onboarding() {
     setError('')
     const res = await updateProfile({ ...data, current_step: stepNum })
     if (!res.data) {
-      setError(res.error || 'Failed to save')
+      setError(res.error || t('api.failedToSave'))
       setSaving(false)
       return false
     }
@@ -178,13 +180,13 @@ export default function Onboarding() {
     if (res.data) {
       navigate('/career-assistant', { replace: true })
     } else {
-      setError(res.error || 'Failed to complete profile')
+      setError(res.error || t('api.failedToCompleteProfile'))
     }
     setSaving(false)
   }
 
   async function handleDetectLocation() {
-    if (!navigator.geolocation) { setError('Geolocation not supported'); return }
+    if (!navigator.geolocation) { setError(t('onboarding.geoNotSupported')); return }
     setDetectingLocation(true)
     setError('')
     navigator.geolocation.getCurrentPosition(
@@ -225,7 +227,7 @@ export default function Onboarding() {
         setDetectingLocation(false)
       },
       () => {
-        setError('Location access denied. Please enter manually.')
+        setError(t('onboarding.locationDenied'))
         setDetectingLocation(false)
       },
       { enableHighAccuracy: false, timeout: 10000 }
@@ -556,7 +558,7 @@ export default function Onboarding() {
                 {classifyingPlace && (
                   <span className="font-poppins text-label-sm text-primary flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
-                    Detecting settlement type...
+                    {t('onboarding.detectingSettlement')}
                   </span>
                 )}
                 {showRegionSuggestions && regionSuggestions.length > 0 && (
@@ -575,7 +577,7 @@ export default function Onboarding() {
                 {regionSearching && (
                   <span className="font-poppins text-label-sm text-on-surface-variant flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
-                    Searching...
+                    {t('onboarding.searching')}
                   </span>
                 )}
               </div>
@@ -609,7 +611,7 @@ export default function Onboarding() {
                 {citySearching && (
                   <span className="font-poppins text-label-sm text-on-surface-variant flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px] animate-spin">progress_activity</span>
-                    Searching...
+                    {t('onboarding.searching')}
                   </span>
                 )}
               </div>

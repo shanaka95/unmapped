@@ -63,6 +63,7 @@
     "sectors": "Sectors",
     "occupations": "Occupations",
     "settlements": "Settlements",
+    "education": "Education",
     "stats": {
       "totalUsers": "Total Users",
       "verifiedUsers": "Verified Users",
@@ -86,6 +87,7 @@
       "classifying": "Classifying...",
       "enterTitleFirst": "Enter a title first",
       "aiSuggestTooltip": "Let AI suggest the best ILO sector",
+      "aiFailed": "AI classification failed. Please select manually.",
       "createSector": "Create Sector",
       "searchSectors": "Search sectors...",
       "noSectors": "No sectors yet. Add your first sector above.",
@@ -112,7 +114,29 @@
       "group": "Group",
       "skillLevel": "Skill Level {{level}}",
       "created": "Created",
-      "updated": "Updated"
+      "updated": "Updated",
+      "tasksInclude": "Tasks Include",
+      "tasksIncludePlaceholder": "Describe tasks performed...",
+      "includedOccupations": "Included Occupations",
+      "includedOccupationsPlaceholder": "Examples of occupations included...",
+      "excludedOccupations": "Excluded Occupations",
+      "excludedOccupationsPlaceholder": "Examples of occupations excluded...",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes..."
+    },
+    "education": {
+      "addLevel": "Add Level",
+      "name": "Name",
+      "namePlaceholder": "e.g. Bachelor of Science",
+      "description": "Description",
+      "descriptionPlaceholder": "A human-friendly description...",
+      "iscedLevel": "ISCED Level",
+      "selectIscedLevel": "Select ISCED level",
+      "selectIscedLevelRequired": "Please select an ISCED level",
+      "createLevel": "Create Level",
+      "searchLevels": "Search education levels...",
+      "noLevels": "No education levels yet. Add one above.",
+      "noSearchResults": "No education levels match your search."
     },
     "level": {
       "1": "Major",
@@ -151,7 +175,19 @@
   "api": {
     "sessionExpired": "Session expired",
     "serverError": "Server error ({{status}})",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "loginFailed": "Login failed",
+    "registrationFailed": "Registration failed",
+    "resetFailed": "Reset failed",
+    "failedToSave": "Failed to save",
+    "failedToCompleteProfile": "Failed to complete profile",
+    "failedToCreateSector": "Failed to create sector",
+    "failedToUpdateOccupation": "Failed to update occupation",
+    "failedToCreateOccupation": "Failed to create occupation",
+    "failedToCreateEducationLevel": "Failed to create education level",
+    "somethingWentWrong": "Something went wrong",
+    "invalidResetToken": "Invalid or missing reset token",
+    "failedToFindCareerMatches": "Failed to find career matches"
   },
   "pagination": {
     "range": "{{from}}–{{to}} of {{total}}"
@@ -201,6 +237,10 @@
     "selfTaughtSkills": "Self-Taught Skills",
     "selfTaughtSkillsSubtitle": "Anything you've taught yourself that you're proud of — programming from YouTube, cooking, woodworking, or any skill you picked up on your own",
     "selfTaughtSkillsPlaceholder": "e.g. I taught myself Python from YouTube tutorials, learned carpentry from my grandfather, and can fix most household electronics...",
+    "geoNotSupported": "Geolocation not supported",
+    "locationDenied": "Location access denied. Please enter manually.",
+    "detectingSettlement": "Detecting settlement type...",
+    "searching": "Searching...",
     "languages": "Languages",
     "languagesSubtitle": "Select all languages you speak",
     "popular": "Popular",
@@ -211,5 +251,32 @@
     "intro": "I'm here to help you find the best path for your career — one that matches what you're good at and what you love doing.",
     "cta": "Let's talk about the profession that suits you most.",
     "button": "Let's Get Started"
+  },
+  "professionMatch": {
+    "thinkingForYou": "Thinking for you, {{name}}...",
+    "thinkingDescription": "I'm going through your experience, skills, and background to find the best career path for you. This might take a moment.",
+    "profileSummaryTitle": "Here's What I Learned About You",
+    "profileSummarySubtitle": "I've analyzed your background, skills, and experience. Review the summary below and edit if needed.",
+    "profileSummaryLabel": "Your Profile Summary",
+    "profileSummaryPlaceholder": "Edit your profile summary...",
+    "editProfile": "Edit Profile",
+    "showMyMatches": "Show My Matches",
+    "youChoseThisPath": "You Chose This Path",
+    "changeMyChoice": "Change My Choice",
+    "title": "Your Top Career Matches",
+    "subtitle": "Based on your profile, here are the 3 professions that best align with your experience and skills.",
+    "whyThisMatch": "Why this match",
+    "hideAnalysis": "Hide Analysis",
+    "seeFullAnalysis": "See Full Analysis",
+    "chooseThisPath": "Choose This Path",
+    "fullAIAnalysis": "Full AI Analysis",
+    "goToDashboard": "Go to Dashboard",
+    "skipToDashboard": "Skip to Dashboard",
+    "updateProfile": "Update Profile",
+    "noMatches": "No matches found. Try adding more work experience or skills to your profile.",
+    "aboutThisRole": "About this role",
+    "highMatch": "high match",
+    "mediumMatch": "medium match",
+    "lowMatch": "low match"
   }
 }

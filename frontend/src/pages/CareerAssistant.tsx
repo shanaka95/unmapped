@@ -13,15 +13,19 @@ export default function CareerAssistant() {
   const [greetingVisible, setGreetingVisible] = useState(false)
   const [typedIntro, setTypedIntro] = useState('')
   const [typedCta, setTypedCta] = useState('')
-  const [typingDone, setTypingDone] = useState(false)
+  const [cursorLine, setCursorLine] = useState<'intro' | 'cta' | 'none'>('intro')
   const [showButton, setShowButton] = useState(false)
 
   const intro = t('careerAssistant.intro')
   const cta = t('careerAssistant.cta')
 
+  const animInstance = useRef<ReturnType<typeof lottie.loadAnimation> | null>(null)
+
   useEffect(() => {
     if (animRef.current) {
-      lottie.loadAnimation({
+      // Destroy any existing instance (React Strict Mode double-mount)
+      lottie.destroy()
+      animInstance.current = lottie.loadAnimation({
         container: animRef.current,
         renderer: 'svg',
         loop: true,
@@ -41,6 +45,7 @@ export default function CareerAssistant() {
         setTypedIntro(intro.slice(0, i))
         if (i >= intro.length) {
           clearInterval(interval)
+          setCursorLine('cta')
           // Step 3: Type CTA text after intro finishes
           const t3 = setTimeout(() => {
             let j = 0
@@ -49,7 +54,7 @@ export default function CareerAssistant() {
               setTypedCta(cta.slice(0, j))
               if (j >= cta.length) {
                 clearInterval(interval2)
-                setTypingDone(true)
+                setCursorLine('none')
                 // Step 4: Show button
                 setTimeout(() => setShowButton(true), 300)
               }
@@ -65,6 +70,7 @@ export default function CareerAssistant() {
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
+      animInstance.current?.destroy()
     }
   }, [intro, cta])
 
@@ -92,7 +98,7 @@ export default function CareerAssistant() {
           <p className="font-poppins text-body-lg text-on-surface-variant leading-relaxed text-center min-h-[3rem] flex items-center justify-center">
             <span>
               {typedIntro}
-              {!typingDone && typedCta.length === 0 && (
+              {cursorLine === 'intro' && (
                 <span className="inline-block w-0.5 h-5 bg-primary ml-0.5 animate-pulse" />
               )}
             </span>
@@ -102,7 +108,7 @@ export default function CareerAssistant() {
           <p className="font-poppins text-body-md text-on-surface-variant text-center min-h-[1.5rem] flex items-center justify-center mt-2">
             <span>
               {typedCta}
-              {!typingDone && (
+              {cursorLine === 'cta' && (
                 <span className="inline-block w-0.5 h-5 bg-primary ml-0.5 animate-pulse" />
               )}
             </span>

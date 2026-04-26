@@ -39,7 +39,12 @@ def chat(
     response.raise_for_status()
     data = response.json()
 
-    return data["content"][0]["text"].strip()
+    # Extract text from content blocks (skip thinking/type='thinking' blocks)
+    for block in data["content"]:
+        if block.get("type") == "text":
+            return block["text"].strip()
+    # Fallback: try first block regardless of type
+    return data["content"][0].get("text", "").strip()
 
 
 def classify_ilo_sector(title: str, description: str | None, ilo_sectors: list[dict]) -> int | None:

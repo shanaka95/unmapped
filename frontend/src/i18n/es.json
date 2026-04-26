@@ -63,6 +63,7 @@
     "sectors": "Sectores",
     "occupations": "Ocupaciones",
     "settlements": "Asentamientos",
+    "education": "Educación",
     "stats": {
       "totalUsers": "Total de usuarios",
       "verifiedUsers": "Usuarios verificados",
@@ -86,6 +87,7 @@
       "classifying": "Clasificando...",
       "enterTitleFirst": "Introduce un título primero",
       "aiSuggestTooltip": "Deja que la IA sugiera el mejor sector OIT",
+      "aiFailed": "La clasificación con IA falló. Por favor, selecciona manualmente.",
       "createSector": "Crear sector",
       "searchSectors": "Buscar sectores...",
       "noSectors": "Aún no hay sectores. Añade tu primer sector arriba.",
@@ -112,7 +114,29 @@
       "group": "Grupo",
       "skillLevel": "Nivel de competencia {{level}}",
       "created": "Creado",
-      "updated": "Actualizado"
+      "updated": "Actualizado",
+      "tasksInclude": "Tareas incluidas",
+      "tasksIncludePlaceholder": "Describe las tareas realizadas...",
+      "includedOccupations": "Ocupaciones incluidas",
+      "includedOccupationsPlaceholder": "Ejemplos de ocupaciones incluidas...",
+      "excludedOccupations": "Ocupaciones excluidas",
+      "excludedOccupationsPlaceholder": "Ejemplos de ocupaciones excluidas...",
+      "notes": "Notas",
+      "notesPlaceholder": "Notas adicionales..."
+    },
+    "education": {
+      "addLevel": "Añadir nivel",
+      "name": "Nombre",
+      "namePlaceholder": "ej. Licenciatura en Ciencias",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Una descripción legible...",
+      "iscedLevel": "Nivel CINE",
+      "selectIscedLevel": "Seleccionar nivel CINE",
+      "selectIscedLevelRequired": "Selecciona un nivel CINE",
+      "createLevel": "Crear nivel",
+      "searchLevels": "Buscar niveles educativos...",
+      "noLevels": "Aún no hay niveles educativos. Añade uno arriba.",
+      "noSearchResults": "Ningún nivel educativo coincide con tu búsqueda."
     },
     "level": {
       "1": "Principal",
@@ -125,6 +149,14 @@
       "2": "2 — Subprincipal",
       "3": "3 — Menor",
       "4": "4 — Unidad"
+    },
+    "languages": "Idiomas",
+    "language": {
+      "addLanguage": "Añadir idioma",
+      "searchPlaceholder": "Buscar idiomas por nombre o código...",
+      "noLanguages": "No hay idiomas vinculados a este país.",
+      "mapHint": "Haz clic en un país para gestionar sus idiomas",
+      "backToMap": "Volver al mapa"
     }
   },
   "validation": {
@@ -143,7 +175,18 @@
   "api": {
     "sessionExpired": "Sesión expirada",
     "serverError": "Error del servidor ({{status}})",
-    "unexpectedError": "Ocurrió un error inesperado"
+    "unexpectedError": "Ocurrió un error inesperado",
+    "loginFailed": "Error de inicio de sesión",
+    "registrationFailed": "Error de registro",
+    "resetFailed": "Error al restablecer",
+    "failedToSave": "Error al guardar",
+    "failedToCompleteProfile": "Error al completar el perfil",
+    "failedToCreateSector": "Error al crear sector",
+    "failedToUpdateOccupation": "Error al actualizar ocupación",
+    "failedToCreateOccupation": "Error al crear ocupación",
+    "somethingWentWrong": "Algo salió mal",
+    "invalidResetToken": "Token de restablecimiento inválido o faltante",
+    "failedToFindCareerMatches": "Error al encontrar coincidencias de carrera"
   },
   "pagination": {
     "range": "{{from}}–{{to}} de {{total}}"
@@ -175,33 +218,51 @@
     "detected": "Detectado",
     "education": "Educación",
     "educationSubtitle": "Selecciona tu nivel educativo más alto",
+    "workExperience": "Experiencia laboral",
+    "workExperienceSubtitle": "Añade tu experiencia laboral formal, o salta si no tienes",
+    "addExperience": "Añadir experiencia",
+    "editExperience": "Editar experiencia",
+    "jobTitlePlaceholder": "ej. Desarrollador de software",
+    "companyPlaceholder": "ej. Acme Corp",
+    "industryPlaceholder": "ej. Tecnología",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "currentJob": "Actualmente trabajo aquí",
+    "current": "Actual",
+    "noExperience": "Aún no tienes experiencia — puedes saltar o añadir una arriba",
+    "informalWork": "Trabajo informal",
+    "informalWorkSubtitle": "¿Algún trabajo informal, hobbies o trabajos secundarios? Cosas como agricultura, freelancing, diseño, reparaciones, o cualquier cosa que genere ingresos extra",
+    "informalWorkPlaceholder": "ej. Hago diseño web freelance los fines de semana, ayudo con la agricultura familiar y reparo teléfonos para los vecinos...",
+    "selfTaughtSkills": "Aprendizaje autónomo",
+    "selfTaughtSkillsSubtitle": "¿Algo que hayas aprendido por tu cuenta de lo que estés orgulloso? Programación desde YouTube, cocina, carpintería, o cualquier habilidad que hayas adquirido por tu cuenta",
+    "selfTaughtSkillsPlaceholder": "ej. Aprendí Python con tutoriales de YouTube, carpintería con mi abuelo, y puedo arreglar la mayoría de los electrodomésticos...",
     "languages": "Idiomas",
     "languagesSubtitle": "Selecciona todos los idiomas que hablas",
     "popular": "Populares",
     "searchLanguage": "Buscar idiomas...",
-    "workExperience": "Work Experience",
-    "workExperienceSubtitle": "Add your formal work experience, or skip if none",
-    "addExperience": "Add Experience",
-    "editExperience": "Edit Experience",
-    "jobTitlePlaceholder": "e.g. Software Developer",
-    "companyPlaceholder": "e.g. Acme Corp",
-    "industryPlaceholder": "e.g. Technology",
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "currentJob": "I currently work here",
-    "current": "Current",
-    "noExperience": "No experience added yet",
-    "informalWork": "Informal Work",
-    "informalWorkSubtitle": "Any informal work, hobbies, or side gigs?",
-    "informalWorkPlaceholder": "e.g. Freelance web design, farming, repair work...",
-    "selfTaughtSkills": "Self-Taught Skills",
-    "selfTaughtSkillsSubtitle": "Anything you taught yourself that you are proud of",
-    "selfTaughtSkillsPlaceholder": "e.g. Self-taught programming from YouTube..."
+    "geoNotSupported": "Geolocalización no soportada",
+    "locationDenied": "Acceso a ubicación denegado. Por favor, ingrésalo manualmente.",
+    "detectingSettlement": "Detectando tipo de asentamiento...",
+    "searching": "Buscando..."
   },
   "careerAssistant": {
     "greeting": "Hola, soy Orin",
     "intro": "Estoy aquí para ayudarte a encontrar el mejor camino para tu carrera — uno que coincida con lo que haces bien y lo que amas.",
     "cta": "Hablemos de la profesión que más te conviene.",
     "button": "Comencemos"
+  },
+  "professionMatch": {
+    "thinkingForYou": "Pensando para ti, {{name}}...",
+    "thinkingDescription": "Estoy revisando tu experiencia, habilidades y formación para encontrar el mejor camino profesional para ti. Esto puede tomar un momento.",
+    "title": "Tus mejores coincidencias profesionales",
+    "subtitle": "Según tu experiencia, habilidades y formación, estas son las profesiones que mejor se ajustan a tu perfil.",
+    "noMatches": "No se encontraron coincidencias. Intenta añadir más experiencia laboral o habilidades a tu perfil.",
+    "aboutThisRole": "Acerca de este rol",
+    "whyThisMatch": "Por qué esta coincidencia",
+    "goToDashboard": "Ir al panel",
+    "updateProfile": "Actualizar perfil",
+    "highMatch": "alta coincidencia",
+    "mediumMatch": "coincidencia media",
+    "lowMatch": "baja coincidencia"
   }
 }

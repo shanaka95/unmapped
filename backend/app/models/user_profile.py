@@ -31,6 +31,7 @@ class UserProfile(Base):
     )
 
     education_level: Mapped["EducationLevel | None"] = relationship(lazy="joined")
+    user: Mapped["User"] = relationship()
     languages: Mapped[list["UserLanguage"]] = relationship(
         back_populates="profile", lazy="joined", cascade="all, delete-orphan"
     )

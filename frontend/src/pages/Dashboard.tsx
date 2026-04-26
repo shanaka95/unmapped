@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
@@ -10,11 +10,20 @@ export default function Dashboard() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const isAdmin = user?.role === 'admin'
+  const [careerPathShown] = useState(() => {
+    return localStorage.getItem('career_path_shown') === 'true'
+  })
 
   useEffect(() => {
-    // Always redirect to onboarding on every login
-    navigate('/onboarding', { replace: true })
-  }, [])
+    // Only redirect to onboarding if career path hasn't been viewed yet
+    if (!careerPathShown) {
+      navigate('/career-assistant', { replace: true })
+    }
+  }, [careerPathShown, navigate])
+
+  if (!careerPathShown) {
+    return null
+  }
 
   return (
     <div className="bg-background text-on-surface antialiased min-h-screen flex flex-col font-poppins text-body-md">
