@@ -6,10 +6,12 @@ import {
   type Sector, type IloSector,
 } from '../api/sectors'
 import {
-  listOccupations, createOccupation, deleteOccupation, listOccupationGroups,
+  listOccupations, createOccupation, updateOccupation, deleteOccupation, listOccupationGroups,
   type Occupation, type OccupationGroup,
 } from '../api/occupations'
 import InputField from '../components/InputField'
+import Pagination from '../components/Pagination'
+import SearchBar from '../components/SearchBar'
 import SelectField from '../components/SelectField'
 import Footer from '../components/Footer'
 
@@ -200,8 +202,8 @@ function SectorsSection() {
   const [formError, setFormError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isClassifying, setIsClassifying] = useState(false)
-
-  // Form state
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [iloSectorId, setIloSectorId] = useState('')
@@ -256,6 +258,15 @@ function SectorsSection() {
 
   const iloOptions = iloSectors.map(s => ({ value: String(s.id), label: s.name }))
   const canClassify = title.trim().length > 0
+
+  const q = search.toLowerCase()
+  const filteredSectors = q
+    ? sectors.filter(s =>
+        s.title.toLowerCase().includes(q) ||
+        (s.description && s.description.toLowerCase().includes(q)) ||
+        s.ilo_sector.name.toLowerCase().includes(q)
+      )
+    : sectors
 
   async function handleAiClassify() {
     if (!canClassify) return
@@ -364,15 +375,23 @@ function SectorsSection() {
       )}
 
       {/* Sectors table */}
+      {!loading && (
+        <SearchBar
+          id="sectors-search"
+          value={search}
+          onChange={setSearch}
+          placeholder="Search sectors..."
+        />
+      )}
       {loading ? (
         <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
           Loading...
         </span>
-      ) : sectors.length === 0 ? (
+      ) : filteredSectors.length === 0 ? (
         <div className="border border-outline-variant rounded-xl p-12 text-center">
           <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">category</span>
           <p className="font-poppins text-body-md text-on-surface-variant">
-            No sectors yet. Add your first sector above.
+            {sectors.length === 0 ? 'No sectors yet. Add your first sector above.' : 'No sectors match your search.'}
           </p>
         </div>
       ) : (
@@ -394,7 +413,7 @@ function SectorsSection() {
               </tr>
             </thead>
             <tbody>
-              {sectors.map(s => (
+              {filteredSectors.map(s => (
                 <tr key={s.id} className="border-b border-outline-variant last:border-b-0 hover:bg-surface-container-low transition-colors duration-300 group">
                   <td className="px-6 py-4 font-medium">{s.title}</td>
                   <td className="px-6 py-4 text-on-surface-variant max-w-xs truncate">
@@ -431,12 +450,24 @@ function OccupationsSection() {
   const [formError, setFormError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Detail / edit panel
+  const [selected, setSelected] = useState<Occupation | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editError, setEditError] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Edit form state
+  const [editTitle, setEditTitle] = useState('')
+  const [editDefinition, setEditDefinition] = useState('')
+  const [editLevel, setEditLevel] = useState('')
+  const [editGroupId, setEditGroupId] = useState('')
+
   // Filters
   const [filterGroupId, setFilterGroupId] = useState('')
   const [filterLevel, setFilterLevel] = useState('')
+  const [search, setSearch] = useState('')
 
-  // Form state
-  const [code, setCode] = useState('')
+  // Add form state
   const [title, setTitle] = useState('')
   const [definition, setDefinition] = useState('')
   const [level, setLevel] = useState('')
@@ -461,18 +492,70 @@ function OccupationsSection() {
 
   useEffect(() => { handleFilterLoad() }, [filterGroupId, filterLevel])
 
+  function openDetail(occ: Occupation) {
+    setSelected(occ)
+    setIsEditing(false)
+    setEditError('')
+  }
+
+  function closeDetail() {
+    setSelected(null)
+    setIsEditing(false)
+    setEditError('')
+  }
+
+  function startEditing() {
+    if (!selected) return
+    setEditTitle(selected.title)
+    setEditDefinition(selected.definition || '')
+    setEditLevel(String(selected.level))
+    setEditGroupId(String(selected.group_id))
+    setEditError('')
+    setIsEditing(true)
+  }
+
+  function cancelEditing() {
+    setIsEditing(false)
+    setEditError('')
+  }
+
+  async function handleUpdate(e: FormEvent) {
+    e.preventDefault()
+    if (!selected) return
+    setEditError('')
+
+    if (!editTitle.trim()) { setEditError('Title is required'); return }
+    if (!editLevel) { setEditError('Level is required'); return }
+    if (!editGroupId) { setEditError('Please select a group'); return }
+
+    setIsSaving(true)
+    const result = await updateOccupation(selected.id, {
+      title: editTitle.trim(),
+      definition: editDefinition.trim() || null,
+      level: parseInt(editLevel),
+      group_id: parseInt(editGroupId),
+    })
+
+    if (result.data) {
+      setSelected(result.data)
+      setIsEditing(false)
+      await loadData()
+    } else {
+      setEditError(result.error || 'Failed to update occupation')
+    }
+    setIsSaving(false)
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setFormError('')
 
-    if (!code.trim()) { setFormError('Code is required'); return }
     if (!title.trim()) { setFormError('Title is required'); return }
     if (!level) { setFormError('Level is required'); return }
     if (!groupId) { setFormError('Please select an occupation group'); return }
 
     setIsSubmitting(true)
     const result = await createOccupation({
-      code: code.trim(),
       title: title.trim(),
       definition: definition.trim() || null,
       level: parseInt(level),
@@ -480,7 +563,6 @@ function OccupationsSection() {
     })
 
     if (result.data) {
-      setCode('')
       setTitle('')
       setDefinition('')
       setLevel('')
@@ -496,6 +578,7 @@ function OccupationsSection() {
   async function handleDelete(id: number) {
     const result = await deleteOccupation(id)
     if (result.status === 204 || result.data !== undefined) {
+      if (selected?.id === id) closeDetail()
       await loadData()
     }
   }
@@ -512,7 +595,21 @@ function OccupationsSection() {
     { value: '4', label: '4 — Unit' },
   ]
 
-  const filtered = occupations
+  const levelLabels: Record<string, string> = {
+    '1': 'Major',
+    '2': 'Sub-Major',
+    '3': 'Minor',
+    '4': 'Unit',
+  }
+
+  const q = search.toLowerCase()
+  const filtered = q
+    ? occupations.filter(o =>
+        o.title.toLowerCase().includes(q) ||
+        (o.definition && o.definition.toLowerCase().includes(q)) ||
+        o.group.name.toLowerCase().includes(q)
+      )
+    : occupations
 
   return (
     <div className="flex flex-col gap-8">
@@ -541,24 +638,14 @@ function OccupationsSection() {
           {formError && (
             <p className="font-poppins text-label-sm text-error">{formError}</p>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <InputField
-              label="Code"
-              id="occ-code"
-              placeholder="e.g. 1111"
-              value={code}
-              onChange={e => setCode(e.target.value)}
-              required
-            />
-            <SelectField
-              label="Level"
-              id="occ-level"
-              options={levelOptions}
-              placeholder="Select level"
-              value={level}
-              onChange={setLevel}
-            />
-          </div>
+          <SelectField
+            label="Level"
+            id="occ-level"
+            options={levelOptions}
+            placeholder="Select level"
+            value={level}
+            onChange={setLevel}
+          />
           <InputField
             label="Title"
             id="occ-title"
@@ -609,102 +696,260 @@ function OccupationsSection() {
         </form>
       )}
 
-      {/* Filters */}
+      {/* Search + Filters */}
       {!loading && (
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="w-56">
-            <SelectField
-              label="Filter by Group"
-              id="filter-group"
-              options={groupOptions}
-              placeholder="All groups"
-              value={filterGroupId}
-              onChange={val => setFilterGroupId(val)}
-            />
+        <div className="flex flex-col gap-4">
+          <SearchBar
+            id="occ-search"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search occupations..."
+          />
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="w-56">
+              <SelectField
+                label="Filter by Group"
+                id="filter-group"
+                options={groupOptions}
+                placeholder="All groups"
+                value={filterGroupId}
+                onChange={val => setFilterGroupId(val)}
+              />
+            </div>
+            <div className="w-48">
+              <SelectField
+                label="Filter by Level"
+                id="filter-level"
+                options={levelOptions}
+                placeholder="All levels"
+                value={filterLevel}
+                onChange={val => setFilterLevel(val)}
+              />
+            </div>
+            {(search || filterGroupId || filterLevel) && (
+              <button
+                onClick={() => { setSearch(''); setFilterGroupId(''); setFilterLevel('') }}
+                className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
+              >
+                <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
+                Clear
+              </button>
+            )}
           </div>
-          <div className="w-48">
-            <SelectField
-              label="Filter by Level"
-              id="filter-level"
-              options={levelOptions}
-              placeholder="All levels"
-              value={filterLevel}
-              onChange={val => setFilterLevel(val)}
-            />
-          </div>
-          {(filterGroupId || filterLevel) && (
-            <button
-              onClick={() => { setFilterGroupId(''); setFilterLevel('') }}
-              className="font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
-            >
-              <span className="material-symbols-outlined text-[16px]">filter_list_off</span>
-              Clear
-            </button>
-          )}
         </div>
       )}
 
-      {/* Table */}
-      {loading ? (
-        <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
-          Loading...
-        </span>
-      ) : filtered.length === 0 ? (
-        <div className="border border-outline-variant rounded-xl p-12 text-center">
-          <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">work</span>
-          <p className="font-poppins text-body-md text-on-surface-variant">
-            No occupations found. Add one above or adjust your filters.
-          </p>
-        </div>
-      ) : (
-        <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-outline-variant bg-surface-container-low">
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                  Code
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Title
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                  Level
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
-                  Group
-                </th>
-                <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(o => (
-                <tr key={o.id} className="border-b border-outline-variant last:border-b-0 hover:bg-surface-container-low transition-colors duration-300 group">
-                  <td className="px-6 py-4">
-                    <span className="font-poppins text-label-sm bg-surface-container text-on-surface-variant px-2 py-1 rounded-default">
-                      {o.code}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 font-medium">{o.title}</td>
-                  <td className="px-6 py-4 text-on-surface-variant">L{o.level}</td>
-                  <td className="px-6 py-4">
-                    <span className="font-poppins text-label-sm text-on-surface-variant">
-                      {o.group.name}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleDelete(o.id)}
-                      className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+      {/* Table + Detail panel */}
+      <div className="flex gap-6">
+        {/* Table */}
+        <div className={`flex-grow min-w-0 ${selected ? 'hidden lg:block' : ''}`}>
+          {loading ? (
+            <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">
+              Loading...
+            </span>
+          ) : filtered.length === 0 ? (
+            <div className="border border-outline-variant rounded-xl p-12 text-center">
+              <span className="material-symbols-outlined text-outline text-[48px] mb-4 block">work</span>
+              <p className="font-poppins text-body-md text-on-surface-variant">
+                No occupations found. Add one above or adjust your filters.
+              </p>
+            </div>
+          ) : (
+            <div className="border border-outline-variant rounded-xl overflow-hidden overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-outline-variant bg-surface-container-low">
+                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                      Title
+                    </th>
+                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                      Level
+                    </th>
+                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3">
+                      Group
+                    </th>
+                    <th className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider px-6 py-3 w-20">
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(o => (
+                    <tr
+                      key={o.id}
+                      onClick={() => openDetail(o)}
+                      className={`border-b border-outline-variant last:border-b-0 transition-colors duration-300 group cursor-pointer ${
+                        selected?.id === o.id
+                          ? 'bg-surface-container-low'
+                          : 'hover:bg-surface-container-low'
+                      }`}
                     >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td className="px-6 py-4 font-medium">{o.title}</td>
+                      <td className="px-6 py-4 text-on-surface-variant">L{o.level}</td>
+                      <td className="px-6 py-4">
+                        <span className="font-poppins text-label-sm text-on-surface-variant">
+                          {o.group.name}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={e => { e.stopPropagation(); handleDelete(o.id) }}
+                          className="opacity-0 group-hover:opacity-100 font-poppins text-label-sm text-error hover:text-on-error-container transition-opacity duration-300 cursor-pointer uppercase tracking-wider"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
+
+        {/* Detail / Edit panel */}
+        {selected && (
+          <div className="w-full lg:w-96 flex-shrink-0 border border-outline-variant rounded-xl bg-surface-container-lowest overflow-hidden flex flex-col">
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant bg-surface-container-low">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="font-poppins text-body-md font-medium truncate">
+                  {selected.title}
+                </span>
+              </div>
+              <button
+                onClick={closeDetail}
+                className="font-poppins text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer flex-shrink-0"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {/* Panel body */}
+            {isEditing ? (
+              <form onSubmit={handleUpdate} className="flex flex-col gap-5 p-6 flex-grow overflow-y-auto">
+                {editError && (
+                  <p className="font-poppins text-label-sm text-error">{editError}</p>
+                )}
+                <InputField
+                  label="Title"
+                  id="edit-title"
+                  value={editTitle}
+                  onChange={e => setEditTitle(e.target.value)}
+                />
+                <SelectField
+                  label="Level"
+                  id="edit-level"
+                  options={levelOptions}
+                  value={editLevel}
+                  onChange={setEditLevel}
+                />
+                <div className="flex flex-col gap-unit">
+                  <label
+                    className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="edit-definition"
+                  >
+                    Definition
+                  </label>
+                  <textarea
+                    id="edit-definition"
+                    value={editDefinition}
+                    onChange={e => setEditDefinition(e.target.value)}
+                    rows={4}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 resize-none"
+                  />
+                </div>
+                <SelectField
+                  label="Occupation Group"
+                  id="edit-group"
+                  options={groupOptions}
+                  value={editGroupId}
+                  onChange={setEditGroupId}
+                />
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer disabled:opacity-50"
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={cancelEditing}
+                    className="font-poppins text-label-sm text-on-surface-variant hover:text-on-surface transition-colors duration-300 cursor-pointer uppercase tracking-wider"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="flex flex-col gap-6 p-6 flex-grow overflow-y-auto">
+                <div className="flex flex-col gap-1">
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Level</span>
+                  <span className="font-poppins text-body-md text-on-surface">
+                    {selected.level} — {levelLabels[String(selected.level)]}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Group</span>
+                  <span className="font-poppins text-body-md text-on-surface">
+                    {selected.group.name}
+                  </span>
+                  <span className="font-poppins text-label-sm text-on-surface-variant">
+                    Skill Level {selected.group.skill_level}
+                  </span>
+                </div>
+                {selected.definition && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Definition</span>
+                    <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                      {selected.definition}
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-col gap-1">
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Created</span>
+                  <span className="font-poppins text-body-md text-on-surface-variant">
+                    {new Date(selected.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Updated</span>
+                  <span className="font-poppins text-body-md text-on-surface-variant">
+                    {new Date(selected.updated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 pt-4 border-t border-outline-variant">
+                  <button
+                    onClick={startEditing}
+                    className="font-poppins text-label-sm bg-primary text-on-primary px-6 py-3 rounded-default uppercase tracking-wider hover:opacity-80 transition-opacity duration-300 cursor-pointer flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(selected.id)}
+                    className="font-poppins text-label-sm text-error hover:text-on-error-container transition-colors duration-300 cursor-pointer uppercase tracking-wider flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Mobile back button when detail is open */}
+      {selected && (
+        <button
+          onClick={closeDetail}
+          className="lg:hidden font-poppins text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 cursor-pointer flex items-center gap-1 uppercase tracking-wider"
+        >
+          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          Back to list
+        </button>
       )}
     </div>
   )

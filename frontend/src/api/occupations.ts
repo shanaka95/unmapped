@@ -33,7 +33,6 @@ export async function listOccupationGroups() {
 
 export async function createOccupation(data: {
   level: number
-  code: string
   title: string
   definition?: string | null
   group_id: number
@@ -43,7 +42,6 @@ export async function createOccupation(data: {
 
 export async function updateOccupation(id: number, data: {
   level?: number
-  code?: string
   title?: string
   definition?: string | null
   group_id?: number

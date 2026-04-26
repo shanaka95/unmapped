@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_user, get_db
@@ -17,7 +17,7 @@ def list_occupations(
     level: int | None = None,
     db: Session = Depends(get_db),
 ):
-    stmt = select(Occupation).order_by(Occupation.code)
+    stmt = select(Occupation).order_by(Occupation.id)
     if group_id is not None:
         stmt = stmt.where(Occupation.group_id == group_id)
     if level is not None:
@@ -33,6 +33,17 @@ def get_occupation(occupation_id: int, db: Session = Depends(get_db)):
     return occupation
 
 
+def _generate_code(db: Session, group: IscoOccupationGroup, level: int) -> str:
+    prefix = str(group.code)
+    max_code = db.scalar(
+        select(func.max(Occupation.code)).where(Occupation.code.startswith(prefix))
+    )
+    if max_code is None:
+        return prefix
+    num = int(max_code) + 1
+    return str(num)
+
+
 @router.post("/", response_model=OccupationResponse, status_code=status.HTTP_201_CREATED)
 def create_occupation(
     body: OccupationCreate,
@@ -43,11 +54,21 @@ def create_occupation(
     if not group:
         raise HTTPException(status_code=400, detail="Invalid group_id")
 
-    existing = db.scalar(select(Occupation).where(Occupation.code == body.code))
-    if existing:
-        raise HTTPException(status_code=409, detail="Occupation with this code already exists")
+    code = body.code
+    if not code:
+        code = _generate_code(db, group, body.level)
+    else:
+        existing = db.scalar(select(Occupation).where(Occupation.code == code))
+        if existing:
+            raise HTTPException(status_code=409, detail="Occupation with this code already exists")
 
-    occupation = Occupation(**body.model_dump())
+    occupation = Occupation(
+        code=code,
+        level=body.level,
+        title=body.title,
+        definition=body.definition,
+        group_id=body.group_id,
+    )
     db.add(occupation)
     db.commit()
     db.refresh(occupation)
@@ -69,11 +90,6 @@ def update_occupation(
         group = db.get(IscoOccupationGroup, body.group_id)
         if not group:
             raise HTTPException(status_code=400, detail="Invalid group_id")
-
-    if body.code is not None and body.code != occupation.code:
-        existing = db.scalar(select(Occupation).where(Occupation.code == body.code))
-        if existing:
-            raise HTTPException(status_code=409, detail="Occupation with this code already exists")
 
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(occupation, field, value)

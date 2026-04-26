@@ -5,19 +5,20 @@ from pydantic import BaseModel, field_validator
 
 class OccupationCreate(BaseModel):
     level: int
-    code: str
+    code: str | None = None
     title: str
     definition: str | None = None
     group_id: int
 
     @field_validator("code")
     @classmethod
-    def code_must_be_valid(cls, v: str) -> str:
-        v = v.strip()
-        if not v:
-            raise ValueError("Code is required")
-        if len(v) > 4:
-            raise ValueError("Code must be 4 characters or less")
+    def code_must_be_valid(cls, v: str | None) -> str | None:
+        if v is not None:
+            v = v.strip()
+            if not v:
+                raise ValueError("Code must not be empty")
+            if len(v) > 4:
+                raise ValueError("Code must be 4 characters or less")
         return v
 
     @field_validator("title")
@@ -40,21 +41,9 @@ class OccupationCreate(BaseModel):
 
 class OccupationUpdate(BaseModel):
     level: int | None = None
-    code: str | None = None
     title: str | None = None
     definition: str | None = None
     group_id: int | None = None
-
-    @field_validator("code")
-    @classmethod
-    def code_must_be_valid(cls, v: str | None) -> str | None:
-        if v is not None:
-            v = v.strip()
-            if not v:
-                raise ValueError("Code must not be empty")
-            if len(v) > 4:
-                raise ValueError("Code must be 4 characters or less")
-        return v
 
     @field_validator("title")
     @classmethod
