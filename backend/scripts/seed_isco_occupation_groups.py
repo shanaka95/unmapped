@@ -1,6 +1,9 @@
 """Seed the isco_occupation_groups table with the 10 ISCO-08 Major Groups."""
 
-from sqlalchemy import select
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.database import SessionLocal
 from app.models.isco_occupation_group import IscoOccupationGroup

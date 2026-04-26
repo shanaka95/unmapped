@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
@@ -24,7 +25,15 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     embedding_model: str = "qwen/qwen3-embedding-8b"
 
-    model_config = {"env_prefix": "UNMAPPED_", "env_file": ".env"}
+    minimax_api_key: str = ""
+    minimax_base_url: str = "https://api.minimax.io/anthropic"
+    minimax_model: str = "MiniMax-M2.7"
+
+    @property
+    def data_dir(self) -> Path:
+        return Path(__file__).resolve().parent.parent / "data"
+
+    model_config = {"env_prefix": "UNMAPPED_", "env_file": ".env", "extra": "ignore"}
 
 
 @lru_cache

@@ -13,6 +13,10 @@ export interface Occupation {
   code: string
   title: string
   definition: string | null
+  tasks_include: string | null
+  included_occupations: string | null
+  excluded_occupations: string | null
+  notes: string | null
   group_id: number
   group: OccupationGroup
   created_at: string
@@ -35,6 +39,10 @@ export async function createOccupation(data: {
   level: number
   title: string
   definition?: string | null
+  tasks_include?: string | null
+  included_occupations?: string | null
+  excluded_occupations?: string | null
+  notes?: string | null
   group_id: number
 }) {
   return apiClient.post<Occupation>('/occupations/', data)
@@ -44,6 +52,10 @@ export async function updateOccupation(id: number, data: {
   level?: number
   title?: string
   definition?: string | null
+  tasks_include?: string | null
+  included_occupations?: string | null
+  excluded_occupations?: string | null
+  notes?: string | null
   group_id?: number
 }) {
   return apiClient.request<Occupation>(`/occupations/${id}`, {

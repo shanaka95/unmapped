@@ -532,6 +532,10 @@ function OccupationsSection() {
   // Edit form state
   const [editTitle, setEditTitle] = useState('')
   const [editDefinition, setEditDefinition] = useState('')
+  const [editTasksInclude, setEditTasksInclude] = useState('')
+  const [editIncludedOccupations, setEditIncludedOccupations] = useState('')
+  const [editExcludedOccupations, setEditExcludedOccupations] = useState('')
+  const [editNotes, setEditNotes] = useState('')
   const [editLevel, setEditLevel] = useState('')
   const [editGroupId, setEditGroupId] = useState('')
 
@@ -544,6 +548,10 @@ function OccupationsSection() {
   // Add form state
   const [title, setTitle] = useState('')
   const [definition, setDefinition] = useState('')
+  const [tasksInclude, setTasksInclude] = useState('')
+  const [includedOccupations, setIncludedOccupations] = useState('')
+  const [excludedOccupations, setExcludedOccupations] = useState('')
+  const [notes, setNotes] = useState('')
   const [level, setLevel] = useState('')
   const [groupId, setGroupId] = useState('')
 
@@ -582,6 +590,10 @@ function OccupationsSection() {
     if (!selected) return
     setEditTitle(selected.title)
     setEditDefinition(selected.definition || '')
+    setEditTasksInclude(selected.tasks_include || '')
+    setEditIncludedOccupations(selected.included_occupations || '')
+    setEditExcludedOccupations(selected.excluded_occupations || '')
+    setEditNotes(selected.notes || '')
     setEditLevel(String(selected.level))
     setEditGroupId(String(selected.group_id))
     setEditError('')
@@ -606,6 +618,10 @@ function OccupationsSection() {
     const result = await updateOccupation(selected.id, {
       title: editTitle.trim(),
       definition: editDefinition.trim() || null,
+      tasks_include: editTasksInclude.trim() || null,
+      included_occupations: editIncludedOccupations.trim() || null,
+      excluded_occupations: editExcludedOccupations.trim() || null,
+      notes: editNotes.trim() || null,
       level: parseInt(editLevel),
       group_id: parseInt(editGroupId),
     })
@@ -632,6 +648,10 @@ function OccupationsSection() {
     const result = await createOccupation({
       title: title.trim(),
       definition: definition.trim() || null,
+      tasks_include: tasksInclude.trim() || null,
+      included_occupations: includedOccupations.trim() || null,
+      excluded_occupations: excludedOccupations.trim() || null,
+      notes: notes.trim() || null,
       level: parseInt(level),
       group_id: parseInt(groupId),
     })
@@ -639,6 +659,10 @@ function OccupationsSection() {
     if (result.data) {
       setTitle('')
       setDefinition('')
+      setTasksInclude('')
+      setIncludedOccupations('')
+      setExcludedOccupations('')
+      setNotes('')
       setLevel('')
       setGroupId('')
       setShowForm(false)
@@ -734,6 +758,70 @@ function OccupationsSection() {
               value={definition}
               onChange={e => setDefinition(e.target.value)}
               rows={3}
+              className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+            />
+          </div>
+          <div className="flex flex-col gap-unit">
+            <label
+              className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+              htmlFor="occ-tasks"
+            >
+              Tasks Include
+            </label>
+            <textarea
+              id="occ-tasks"
+              placeholder="Describe tasks performed..."
+              value={tasksInclude}
+              onChange={e => setTasksInclude(e.target.value)}
+              rows={3}
+              className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+            />
+          </div>
+          <div className="flex flex-col gap-unit">
+            <label
+              className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+              htmlFor="occ-included"
+            >
+              Included Occupations
+            </label>
+            <textarea
+              id="occ-included"
+              placeholder="Examples of occupations included..."
+              value={includedOccupations}
+              onChange={e => setIncludedOccupations(e.target.value)}
+              rows={2}
+              className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+            />
+          </div>
+          <div className="flex flex-col gap-unit">
+            <label
+              className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+              htmlFor="occ-excluded"
+            >
+              Excluded Occupations
+            </label>
+            <textarea
+              id="occ-excluded"
+              placeholder="Examples of occupations excluded..."
+              value={excludedOccupations}
+              onChange={e => setExcludedOccupations(e.target.value)}
+              rows={2}
+              className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
+            />
+          </div>
+          <div className="flex flex-col gap-unit">
+            <label
+              className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+              htmlFor="occ-notes"
+            >
+              Notes
+            </label>
+            <textarea
+              id="occ-notes"
+              placeholder="Additional notes..."
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              rows={2}
               className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 placeholder:text-outline resize-none"
             />
           </div>
@@ -933,6 +1021,66 @@ function OccupationsSection() {
                     className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 resize-none"
                   />
                 </div>
+                <div className="flex flex-col gap-unit">
+                  <label
+                    className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="edit-tasks"
+                  >
+                    Tasks Include
+                  </label>
+                  <textarea
+                    id="edit-tasks"
+                    value={editTasksInclude}
+                    onChange={e => setEditTasksInclude(e.target.value)}
+                    rows={4}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 resize-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-unit">
+                  <label
+                    className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="edit-included"
+                  >
+                    Included Occupations
+                  </label>
+                  <textarea
+                    id="edit-included"
+                    value={editIncludedOccupations}
+                    onChange={e => setEditIncludedOccupations(e.target.value)}
+                    rows={3}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 resize-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-unit">
+                  <label
+                    className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="edit-excluded"
+                  >
+                    Excluded Occupations
+                  </label>
+                  <textarea
+                    id="edit-excluded"
+                    value={editExcludedOccupations}
+                    onChange={e => setEditExcludedOccupations(e.target.value)}
+                    rows={3}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 resize-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-unit">
+                  <label
+                    className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="edit-notes"
+                  >
+                    Notes
+                  </label>
+                  <textarea
+                    id="edit-notes"
+                    value={editNotes}
+                    onChange={e => setEditNotes(e.target.value)}
+                    rows={3}
+                    className="w-full bg-transparent border-0 border-b border-outline-variant px-0 py-2 text-on-surface focus:ring-0 focus:border-primary focus:outline-none transition-colors duration-300 resize-none"
+                  />
+                </div>
                 <SelectField
                   label={t('admin.occupation.occupationGroup')}
                   id="edit-group"
@@ -979,6 +1127,38 @@ function OccupationsSection() {
                     <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">{t('admin.occupation.definition')}</span>
                     <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
                       {selected.definition}
+                    </p>
+                  </div>
+                )}
+                {selected.tasks_include && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Tasks Include</span>
+                    <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                      {selected.tasks_include}
+                    </p>
+                  </div>
+                )}
+                {selected.included_occupations && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Included Occupations</span>
+                    <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                      {selected.included_occupations}
+                    </p>
+                  </div>
+                )}
+                {selected.excluded_occupations && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Excluded Occupations</span>
+                    <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                      {selected.excluded_occupations}
+                    </p>
+                  </div>
+                )}
+                {selected.notes && (
+                  <div className="flex flex-col gap-1">
+                    <span className="font-poppins text-label-sm text-on-surface-variant uppercase tracking-wider">Notes</span>
+                    <p className="font-poppins text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
+                      {selected.notes}
                     </p>
                   </div>
                 )}
