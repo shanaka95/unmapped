@@ -13,6 +13,7 @@ export default function CareerAssistant() {
   const [greetingVisible, setGreetingVisible] = useState(false)
   const [typedIntro, setTypedIntro] = useState('')
   const [typedCta, setTypedCta] = useState('')
+  const [typingDone, setTypingDone] = useState(false)
   const [showButton, setShowButton] = useState(false)
 
   const intro = t('careerAssistant.intro')
@@ -48,6 +49,7 @@ export default function CareerAssistant() {
               setTypedCta(cta.slice(0, j))
               if (j >= cta.length) {
                 clearInterval(interval2)
+                setTypingDone(true)
                 // Step 4: Show button
                 setTimeout(() => setShowButton(true), 300)
               }
@@ -71,7 +73,7 @@ export default function CareerAssistant() {
       <main className="flex-grow flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-lg flex flex-col items-center gap-10">
           {/* Hand wave animation */}
-          <div className="w-36 h-36 overflow-hidden" style={{ transform: 'scale(0.85)' }}>
+          <div className="w-36 h-36 overflow-hidden flex-shrink-0" style={{ transform: 'scale(0.85)' }}>
             <div ref={animRef} className="w-full h-full" />
           </div>
 
@@ -86,25 +88,25 @@ export default function CareerAssistant() {
             </h1>
           </div>
 
-          {/* Typed intro */}
-          {typedIntro && (
-            <p className="font-poppins text-body-lg text-on-surface-variant leading-relaxed text-center">
+          {/* Typed intro — space reserved, text fades in */}
+          <p className="font-poppins text-body-lg text-on-surface-variant leading-relaxed text-center min-h-[3rem] flex items-center justify-center">
+            <span>
               {typedIntro}
-              {!showButton && typedCta.length === 0 && (
+              {!typingDone && typedCta.length === 0 && (
                 <span className="inline-block w-0.5 h-5 bg-primary ml-0.5 animate-pulse" />
               )}
-            </p>
-          )}
+            </span>
+          </p>
 
-          {/* Typed CTA */}
-          {typedCta && (
-            <p className="font-poppins text-body-md text-on-surface-variant text-center mt-2">
+          {/* Typed CTA — space reserved, text fades in */}
+          <p className="font-poppins text-body-md text-on-surface-variant text-center min-h-[1.5rem] flex items-center justify-center mt-2">
+            <span>
               {typedCta}
-              {!showButton && (
+              {!typingDone && (
                 <span className="inline-block w-0.5 h-5 bg-primary ml-0.5 animate-pulse" />
               )}
-            </p>
-          )}
+            </span>
+          </p>
 
           {/* Button */}
           {showButton && (
